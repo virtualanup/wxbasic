@@ -13,7 +13,9 @@ namespace wxbasic {
         Tokenizer tokenizer;
 
         public:
-            WxBasic(const std::string input_file);
+            WxBasic();
+            WxBasic(const std::string file_name);
+            void load_file(const std::string file_name);
             void parse();
             void print_tokens() const;
     };

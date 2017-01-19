@@ -17,7 +17,8 @@ namespace wxbasic {
             b= pos+20;
 
         message = "Error : "+error+"\n";
-        message += "In file "+source_name+"\n";
+        message += "In file "+source_name+"\n\n";
+
         for(size_t i =a; i<b; i++)
             message += source[i];
 

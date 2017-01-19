@@ -11,7 +11,7 @@ namespace wxbasic
         }
 
     std::string Token::str() const{
-        return  TokenNames.at(token) + " - " + content;
+        return  TokenNames.at(token) + " - \"" + content + "\"";
     }
 
 }

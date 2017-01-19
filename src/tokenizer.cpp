@@ -1,6 +1,5 @@
 #include<iostream>
 #include<fstream>
-#include"error.h"
 #include"tokenizer.h"
 
 namespace wxbasic {
@@ -45,8 +44,10 @@ namespace wxbasic {
                     break;
 
                 default:
-                    throw Error(std::string("Unexpected character") + source[pos], pos, source, *source_name);
-                    pos++;
+                    throw TokenizerError(
+                            std::string("Unexpected Character \'") + source[pos]+std::string("\'"),
+                            *this
+                            );
             }
         }
     }
@@ -207,8 +208,7 @@ namespace wxbasic {
         while(pos < source.size()) {
             switch(source[pos]) {
                 case '\n':
-                    throw Error("Unexpected end of line");
-                    break;
+                    throw TokenizerError("Unexpected end of line", *this);
                 case '"':
                     // end of string
                     tokens.push_back(
@@ -224,7 +224,7 @@ namespace wxbasic {
                     // special character
                     pos++;
                     if(pos >= source.size())
-                        throw Error(eol_error);
+                        throw TokenizerError(eol_error, *this);
                     switch(source[pos]) {
                         case 'n':
                             tok_str += "\n";
@@ -245,7 +245,7 @@ namespace wxbasic {
                             tok_str += "\'";
                             break;
                         default:
-                            throw Error("Unknown escape code");
+                            throw TokenizerError("Unknown escape code", *this);
                     }
                     break;
                 default:
@@ -254,6 +254,6 @@ namespace wxbasic {
             }
         }
 
-        throw Error(eol_error);
+        throw TokenizerError(eol_error, *this);
     }
 }
