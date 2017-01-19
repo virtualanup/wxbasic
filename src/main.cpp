@@ -1,6 +1,7 @@
 #include<iostream>
 #include<fstream>
 
+#include"error.h"
 #include"version.h"
 #include"wxbasic.h"
 
@@ -27,14 +28,25 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    if(argc == 3 && std::string(argv[1]) == "--tokens") {
-        wxbasic::WxBasic basic = wxbasic::WxBasic(std::string(argv[2]));
+    try {
 
-        basic.print_tokens();
+        if(argc == 3 && std::string(argv[1]) == "--tokens") {
+            wxbasic::WxBasic basic = wxbasic::WxBasic(std::string(argv[2]));
 
-        return 0;
+            basic.parse();
+
+            basic.print_tokens();
+
+            return 0;
+        }
     }
-
+    catch(const wxbasic::Error &error) {
+        std::cout<<error.get_message()<<std::endl;
+        return 1;
+    }
+    catch(...) {
+        std::cout<<"Unknown Error"<<std::endl;
+    }
 
     std::cout<<error<<std::endl;
     return 1;

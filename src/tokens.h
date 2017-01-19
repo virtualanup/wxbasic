@@ -9,10 +9,19 @@
 namespace wxbasic {
 
     enum class TokenType {
-        END_OF_FILE,
+        TOK_INTEGER,
+        TOK_FLOAT,
+        TOK_STRING,
+        TOK_EOF,
     };
 
-    const extern std::map<TokenType, std::string> TokenNames;
+    const static std::map<TokenType, std::string> TokenNames = {
+        {TokenType::TOK_INTEGER,"TOK_INTEGER"},
+        {TokenType::TOK_FLOAT,"TOK_FLOAT"},
+        {TokenType::TOK_STRING,"TOK_STRING"},
+        {TokenType::TOK_EOF,"End of File"},
+    };
+
 
     class Token {
         public:
