@@ -22,6 +22,12 @@ namespace wxbasic {
         TOK_SHL,
         TOK_SHR,
 
+        TOK_BINOP, // +, -, *, /, %, ^, '\'
+
+        TOK_LPAREN,
+        TOK_RPAREN,
+
+
         TOK_EOF,
     };
 
@@ -38,6 +44,11 @@ namespace wxbasic {
 
         {TokenType::TOK_SHL,"TOK_SHL"},
         {TokenType::TOK_SHR,"TOK_SHR"},
+
+        {TokenType::TOK_BINOP,"TOK_BINOP"},
+
+        {TokenType::TOK_LPAREN,"TOK_LPAREN"},
+        {TokenType::TOK_RPAREN,"TOK_RPAREN"},
 
         {TokenType::TOK_EOF,"End of File"},
     };

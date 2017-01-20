@@ -45,8 +45,27 @@ namespace wxbasic {
                     break;
 
                     // operators
-                case '!':
+                case '(':
+                    push_token(TokenType::TOK_LPAREN, "(");
+                    pos++;
+                    break;
 
+                case ')':
+                    push_token(TokenType::TOK_RPAREN, ")");
+                    pos++;
+                    break;
+
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                case '%':
+                case '^':
+                case '\\':
+                    push_token(TokenType::TOK_BINOP, std::string(1, source[pos]));
+                    pos++;
+                    break;
+                case '!':
                     pos++;
                     if(pos < source.size() && source[pos] == '=') {
                         push_token(TokenType::TOK_NE, "!=");
@@ -60,17 +79,17 @@ namespace wxbasic {
                 case '<':
                     pos++;
                     if(pos < source.size() && source[pos] == '=') {
-                                 push_token(TokenType::TOK_LTE, "<=");
-                                 pos++;
+                        push_token(TokenType::TOK_LTE, "<=");
+                        pos++;
                     }
                     else if(pos < source.size() && source[pos] == '>') {
-                                push_token(TokenType::TOK_NE, "<>");
-                                pos++;
+                        push_token(TokenType::TOK_NE, "<>");
+                        pos++;
                     }
                     else if(pos < source.size() && source[pos] == '<') {
 
-                                push_token(TokenType::TOK_SHL, "<<");
-                                pos++;
+                        push_token(TokenType::TOK_SHL, "<<");
+                        pos++;
                     }
                     else {
                         push_token(TokenType::TOK_LT, "<");
@@ -80,15 +99,15 @@ namespace wxbasic {
                 case '>':
                     pos++;
                     if(pos < source.size() && source[pos] == '=') {
-                                push_token(TokenType::TOK_GTE, ">=");
-                                pos++;
+                        push_token(TokenType::TOK_GTE, ">=");
+                        pos++;
                     }
                     else if(pos < source.size() && source[pos] == '>') {
-                                push_token(TokenType::TOK_SHR, ">>");
-                                pos++;
+                        push_token(TokenType::TOK_SHR, ">>");
+                        pos++;
                     }
                     else {
-                                push_token(TokenType::TOK_GT, ">");
+                        push_token(TokenType::TOK_GT, ">");
                     }
                     break;
 
