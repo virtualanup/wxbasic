@@ -33,6 +33,8 @@ namespace wxbasic {
 
         void tok_string();
 
+        void push_token(TokenType token, const std::string& content);
+
         public:
         void tokenize();
 

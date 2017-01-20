@@ -40,12 +40,62 @@ namespace wxbasic {
                     break;
 
                 case '\n':
+                    // line breaks
                     pos++;
+                    break;
+
+                    // operators
+                case '!':
+
+                    pos++;
+                    if(pos < source.size() && source[pos] == '=') {
+                        push_token(TokenType::TOK_NE, "!=");
+                        pos++;
+                        break;
+                    }
+                    else
+                        throw TokenizerError("Expected = after !",*this);
+
+
+                case '<':
+                    pos++;
+                    if(pos < source.size() && source[pos] == '=') {
+                                 push_token(TokenType::TOK_LTE, "<=");
+                                 pos++;
+                    }
+                    else if(pos < source.size() && source[pos] == '>') {
+                                push_token(TokenType::TOK_NE, "<>");
+                                pos++;
+                    }
+                    else if(pos < source.size() && source[pos] == '<') {
+
+                                push_token(TokenType::TOK_SHL, "<<");
+                                pos++;
+                    }
+                    else {
+                        push_token(TokenType::TOK_LT, "<");
+                    }
+                    break;
+
+                case '>':
+                    pos++;
+                    if(pos < source.size() && source[pos] == '=') {
+                                push_token(TokenType::TOK_GTE, ">=");
+                                pos++;
+                    }
+                    else if(pos < source.size() && source[pos] == '>') {
+                                push_token(TokenType::TOK_SHR, ">>");
+                                pos++;
+                    }
+                    else {
+                                push_token(TokenType::TOK_GT, ">");
+                    }
                     break;
 
                 default:
                     throw TokenizerError(
-                            std::string("Unexpected Character \'") + source[pos]+std::string("\'"),
+                            std::string("Unexpected Character \'") + \
+                            source[pos]+std::string("\'"),
                             *this
                             );
             }
@@ -138,13 +188,9 @@ namespace wxbasic {
                 pos++;
                 tok_hex_digits();
 
-                tokens.push_back(
-                        Token(
-                            TokenType::TOK_INTEGER,
-                            source.substr(start_pos, pos - start_pos),
-                            source_name
-                            )
-                        );
+                push_token(
+                        TokenType::TOK_INTEGER,
+                        source.substr(start_pos, pos - start_pos));
                 return;
             }
             else if(pos < source.size() && (source[pos] == 'b' || source[pos] == 'B')) {
@@ -153,13 +199,9 @@ namespace wxbasic {
                 size_t start_pos = pos;
                 tok_bin_digits();
 
-                tokens.push_back(
-                        Token(
-                            TokenType::TOK_INTEGER,
-                            source.substr(start_pos, pos - start_pos),
-                            source_name
-                            )
-                        );
+                push_token(
+                        TokenType::TOK_INTEGER,
+                        source.substr(start_pos, pos - start_pos));
 
             }
             else {
@@ -175,23 +217,15 @@ namespace wxbasic {
             pos++;
             tok_digits();
 
-            tokens.push_back(
-                    Token(
-                        TokenType::TOK_FLOAT,
-                        source.substr(start_pos, pos - start_pos),
-                        source_name
-                        )
-                    );
+            push_token(
+                    TokenType::TOK_FLOAT,
+                    source.substr(start_pos, pos - start_pos));
         }
         else
         {
-            tokens.push_back(
-                    Token(
-                        TokenType::TOK_INTEGER,
-                        source.substr(start_pos, pos - start_pos),
-                        source_name
-                        )
-                    );
+            push_token(
+                    TokenType::TOK_INTEGER,
+                    source.substr(start_pos, pos - start_pos));
 
         }
     }
@@ -211,13 +245,9 @@ namespace wxbasic {
                     throw TokenizerError("Unexpected end of line", *this);
                 case '"':
                     // end of string
-                    tokens.push_back(
-                            Token(
-                                TokenType::TOK_STRING,
-                                tok_str,
-                                source_name
-                                )
-                            );
+                    push_token(
+                            TokenType::TOK_STRING,
+                            tok_str);
                     pos++;
                     return;
                 case '\\':
@@ -256,4 +286,17 @@ namespace wxbasic {
 
         throw TokenizerError(eol_error, *this);
     }
+
+    void Tokenizer::push_token(TokenType token, const std::string& content) {
+
+        tokens.push_back(
+                Token(
+                    token,
+                    content,
+                    source_name
+                    )
+                );
+    }
+
+
 }

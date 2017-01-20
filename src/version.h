@@ -1,8 +1,8 @@
-#ifndef _WXBASIC_VERSION_H
-#define _WXBASIC_VERSION_H
+#ifndef WXBASIC_VERSION_H
+#define WXBASIC_VERSION_H
 
 namespace wxbasic {
     extern const char * const VERSION;
 }
 
-#endif
+#endif // WXBASIC_VERSION_H
