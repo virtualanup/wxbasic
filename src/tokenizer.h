@@ -28,6 +28,7 @@ namespace wxbasic {
         void skip_white();
         void tok_number();
 
+        void tok_spaces();
         void tok_digits();
         void tok_hex_digits();
         void tok_bin_digits();

@@ -6,125 +6,125 @@ namespace wxbasic {
 
     std::shared_ptr<wxbasic::Token> Tokenizer::next_token() {
 
-        if(pos >= source.size()) {
-            // return EOF
-            set_token(TokenType::TOK_EOF, "");
-            return cur_token;
-        }
+        while(pos < source.size()) {
 
-        switch(source[pos]) {
-            case ' ':
-            case '\t':
-            case '\r':
-                pos++;
-                break;
-
-            case '\'': // basic style comment
-            case '#': // python style comment
-
-                while(pos < source.size() && source[pos] != '\n')
-                    pos++;
-                pos++;
-                break;
-
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-            case '0':
-                // parse a number
-                tok_number();
-                break;
-
-            case '\"':
-                tok_string();
-                break;
-
-            case '\n':
-                // line breaks
-                pos++;
-                break;
-
-                // operators
-            case '(':
-                set_token(TokenType::TOK_LPAREN, "(");
-                pos++;
-                break;
-
-            case ')':
-                set_token(TokenType::TOK_RPAREN, ")");
-                pos++;
-                break;
-
-            case '+':
-            case '-':
-            case '*':
-            case '/':
-            case '%':
-            case '^':
-            case '\\':
-                set_token(TokenType::TOK_BINOP, std::string(1, source[pos]));
-                pos++;
-                break;
-            case '!':
-                pos++;
-                if(pos < source.size() && source[pos] == '=') {
-                    set_token(TokenType::TOK_NE, "!=");
+            switch(source[pos]) {
+                case ' ':
+                case '\t':
+                case '\r':
                     pos++;
                     break;
-                }
-                else
-                    throw TokenizerError("Expected = after !",*this);
+
+                case '\'': // basic style comment
+                case '#': // python style comment
+
+                    while(pos < source.size() && source[pos] != '\n')
+                        pos++;
+                    pos++;
+                    break;
+
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                case '0':
+                    // parse a number
+                    tok_number();
+                    return cur_token;
+
+                case '\"':
+                    tok_string();
+                    return cur_token;
+
+                case '\n':
+                    // line breaks
+                    pos++;
+                    break;
+
+                    // operators
+                case '(':
+                    set_token(TokenType::TOK_LPAREN, "(");
+                    pos++;
+                    return cur_token;
+
+                case ')':
+                    set_token(TokenType::TOK_RPAREN, ")");
+                    pos++;
+                    return cur_token;
+
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                case '%':
+                case '^':
+                case '\\':
+                    set_token(TokenType::TOK_BINOP, std::string(1, source[pos]));
+                    pos++;
+                    return cur_token;
+                case '!':
+                    pos++;
+                    if(pos < source.size() && source[pos] == '=') {
+                        set_token(TokenType::TOK_NE, "!=");
+                        pos++;
+                        return cur_token;
+                    }
+                    else
+                        throw TokenizerError("Expected = after !",*this);
 
 
-            case '<':
-                pos++;
-                if(pos < source.size() && source[pos] == '=') {
-                    set_token(TokenType::TOK_LTE, "<=");
+                case '<':
                     pos++;
-                }
-                else if(pos < source.size() && source[pos] == '>') {
-                    set_token(TokenType::TOK_NE, "<>");
-                    pos++;
-                }
-                else if(pos < source.size() && source[pos] == '<') {
+                    if(pos < source.size() && source[pos] == '=') {
+                        set_token(TokenType::TOK_LTE, "<=");
+                        pos++;
+                    }
+                    else if(pos < source.size() && source[pos] == '>') {
+                        set_token(TokenType::TOK_NE, "<>");
+                        pos++;
+                    }
+                    else if(pos < source.size() && source[pos] == '<') {
 
-                    set_token(TokenType::TOK_SHL, "<<");
-                    pos++;
-                }
-                else {
-                    set_token(TokenType::TOK_LT, "<");
-                }
-                break;
+                        set_token(TokenType::TOK_SHL, "<<");
+                        pos++;
+                    }
+                    else {
+                        set_token(TokenType::TOK_LT, "<");
+                    }
+                    return cur_token;
 
-            case '>':
-                pos++;
-                if(pos < source.size() && source[pos] == '=') {
-                    set_token(TokenType::TOK_GTE, ">=");
+                case '>':
                     pos++;
-                }
-                else if(pos < source.size() && source[pos] == '>') {
-                    set_token(TokenType::TOK_SHR, ">>");
-                    pos++;
-                }
-                else {
-                    set_token(TokenType::TOK_GT, ">");
-                }
-                break;
+                    if(pos < source.size() && source[pos] == '=') {
+                        set_token(TokenType::TOK_GTE, ">=");
+                        pos++;
+                    }
+                    else if(pos < source.size() && source[pos] == '>') {
+                        set_token(TokenType::TOK_SHR, ">>");
+                        pos++;
+                    }
+                    else {
+                        set_token(TokenType::TOK_GT, ">");
+                    }
+                    return cur_token;
 
-            default:
-                throw TokenizerError(
-                        std::string("Unexpected Character \'") + \
-                        source[pos]+std::string("\'"),
-                        *this
-                        );
+                default:
+                    throw TokenizerError(
+                            std::string("Unexpected Character \'") + \
+                            source[pos]+std::string("\'"),
+                            *this
+                            );
+            }
         }
+
+        set_token(TokenType::TOK_EOF, "");
         return cur_token;
+
     }
 
     std::shared_ptr<wxbasic::Token> Tokenizer::token() {

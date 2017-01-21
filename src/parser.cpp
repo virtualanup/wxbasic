@@ -2,6 +2,6 @@
 
 namespace wxbasic {
 
-    Parser::Parser(){}
+    Parser::Parser(Tokenizer& tok):tokenizer(tok){}
 
 }
