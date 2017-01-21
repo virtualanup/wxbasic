@@ -4,121 +4,132 @@
 
 namespace wxbasic {
 
-    void Tokenizer::tokenize() {
-        while(pos < source.size()) {
-            switch(source[pos]) {
-                case ' ':
-                case '\t':
-                case '\r':
-                    pos++;
-                    break;
+    std::shared_ptr<wxbasic::Token> Tokenizer::next_token() {
 
-                case '\'': // basic style comment
-                case '#': // python style comment
-
-                    while(pos < source.size() && source[pos] != '\n')
-                        pos++;
-                    pos++;
-                    break;
-
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                case '0':
-                    // parse a number
-                    tok_number();
-                    break;
-
-                case '\"':
-                    tok_string();
-                    break;
-
-                case '\n':
-                    // line breaks
-                    pos++;
-                    break;
-
-                    // operators
-                case '(':
-                    push_token(TokenType::TOK_LPAREN, "(");
-                    pos++;
-                    break;
-
-                case ')':
-                    push_token(TokenType::TOK_RPAREN, ")");
-                    pos++;
-                    break;
-
-                case '+':
-                case '-':
-                case '*':
-                case '/':
-                case '%':
-                case '^':
-                case '\\':
-                    push_token(TokenType::TOK_BINOP, std::string(1, source[pos]));
-                    pos++;
-                    break;
-                case '!':
-                    pos++;
-                    if(pos < source.size() && source[pos] == '=') {
-                        push_token(TokenType::TOK_NE, "!=");
-                        pos++;
-                        break;
-                    }
-                    else
-                        throw TokenizerError("Expected = after !",*this);
-
-
-                case '<':
-                    pos++;
-                    if(pos < source.size() && source[pos] == '=') {
-                        push_token(TokenType::TOK_LTE, "<=");
-                        pos++;
-                    }
-                    else if(pos < source.size() && source[pos] == '>') {
-                        push_token(TokenType::TOK_NE, "<>");
-                        pos++;
-                    }
-                    else if(pos < source.size() && source[pos] == '<') {
-
-                        push_token(TokenType::TOK_SHL, "<<");
-                        pos++;
-                    }
-                    else {
-                        push_token(TokenType::TOK_LT, "<");
-                    }
-                    break;
-
-                case '>':
-                    pos++;
-                    if(pos < source.size() && source[pos] == '=') {
-                        push_token(TokenType::TOK_GTE, ">=");
-                        pos++;
-                    }
-                    else if(pos < source.size() && source[pos] == '>') {
-                        push_token(TokenType::TOK_SHR, ">>");
-                        pos++;
-                    }
-                    else {
-                        push_token(TokenType::TOK_GT, ">");
-                    }
-                    break;
-
-                default:
-                    throw TokenizerError(
-                            std::string("Unexpected Character \'") + \
-                            source[pos]+std::string("\'"),
-                            *this
-                            );
-            }
+        if(pos >= source.size()) {
+            // return EOF
+            set_token(TokenType::TOK_EOF, "");
+            return cur_token;
         }
+
+        switch(source[pos]) {
+            case ' ':
+            case '\t':
+            case '\r':
+                pos++;
+                break;
+
+            case '\'': // basic style comment
+            case '#': // python style comment
+
+                while(pos < source.size() && source[pos] != '\n')
+                    pos++;
+                pos++;
+                break;
+
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '0':
+                // parse a number
+                tok_number();
+                break;
+
+            case '\"':
+                tok_string();
+                break;
+
+            case '\n':
+                // line breaks
+                pos++;
+                break;
+
+                // operators
+            case '(':
+                set_token(TokenType::TOK_LPAREN, "(");
+                pos++;
+                break;
+
+            case ')':
+                set_token(TokenType::TOK_RPAREN, ")");
+                pos++;
+                break;
+
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+            case '%':
+            case '^':
+            case '\\':
+                set_token(TokenType::TOK_BINOP, std::string(1, source[pos]));
+                pos++;
+                break;
+            case '!':
+                pos++;
+                if(pos < source.size() && source[pos] == '=') {
+                    set_token(TokenType::TOK_NE, "!=");
+                    pos++;
+                    break;
+                }
+                else
+                    throw TokenizerError("Expected = after !",*this);
+
+
+            case '<':
+                pos++;
+                if(pos < source.size() && source[pos] == '=') {
+                    set_token(TokenType::TOK_LTE, "<=");
+                    pos++;
+                }
+                else if(pos < source.size() && source[pos] == '>') {
+                    set_token(TokenType::TOK_NE, "<>");
+                    pos++;
+                }
+                else if(pos < source.size() && source[pos] == '<') {
+
+                    set_token(TokenType::TOK_SHL, "<<");
+                    pos++;
+                }
+                else {
+                    set_token(TokenType::TOK_LT, "<");
+                }
+                break;
+
+            case '>':
+                pos++;
+                if(pos < source.size() && source[pos] == '=') {
+                    set_token(TokenType::TOK_GTE, ">=");
+                    pos++;
+                }
+                else if(pos < source.size() && source[pos] == '>') {
+                    set_token(TokenType::TOK_SHR, ">>");
+                    pos++;
+                }
+                else {
+                    set_token(TokenType::TOK_GT, ">");
+                }
+                break;
+
+            default:
+                throw TokenizerError(
+                        std::string("Unexpected Character \'") + \
+                        source[pos]+std::string("\'"),
+                        *this
+                        );
+        }
+        return cur_token;
+    }
+
+    std::shared_ptr<wxbasic::Token> Tokenizer::token() {
+        // returns current token
+        return cur_token;
     }
 
     void Tokenizer::load_file(std::string file_name) {
@@ -149,10 +160,6 @@ namespace wxbasic {
         pos = 0;
     }
 
-
-    const std::vector<wxbasic::Token>& Tokenizer::get_tokens() const {
-        return tokens;
-    }
 
     void Tokenizer::skip_white() {
         while( pos < source.size() && (source[pos] == '\t' || source[pos] == ' '))
@@ -207,7 +214,7 @@ namespace wxbasic {
                 pos++;
                 tok_hex_digits();
 
-                push_token(
+                set_token(
                         TokenType::TOK_INTEGER,
                         source.substr(start_pos, pos - start_pos));
                 return;
@@ -218,7 +225,7 @@ namespace wxbasic {
                 size_t start_pos = pos;
                 tok_bin_digits();
 
-                push_token(
+                set_token(
                         TokenType::TOK_INTEGER,
                         source.substr(start_pos, pos - start_pos));
 
@@ -236,13 +243,13 @@ namespace wxbasic {
             pos++;
             tok_digits();
 
-            push_token(
+            set_token(
                     TokenType::TOK_FLOAT,
                     source.substr(start_pos, pos - start_pos));
         }
         else
         {
-            push_token(
+            set_token(
                     TokenType::TOK_INTEGER,
                     source.substr(start_pos, pos - start_pos));
 
@@ -264,7 +271,7 @@ namespace wxbasic {
                     throw TokenizerError("Unexpected end of line", *this);
                 case '"':
                     // end of string
-                    push_token(
+                    set_token(
                             TokenType::TOK_STRING,
                             tok_str);
                     pos++;
@@ -306,10 +313,9 @@ namespace wxbasic {
         throw TokenizerError(eol_error, *this);
     }
 
-    void Tokenizer::push_token(TokenType token, const std::string& content) {
+    void Tokenizer::set_token(TokenType token, const std::string& content) {
 
-        tokens.push_back(
-                Token(
+        cur_token = std::shared_ptr<wxbasic::Token>(new Token(
                     token,
                     content,
                     source_name

@@ -56,11 +56,11 @@ namespace wxbasic {
 
     class Token {
         public:
-            wxbasic::TokenType token;
+            wxbasic::TokenType type;
             std::string content;
             std::shared_ptr<std::string> source_name;
 
-            Token(TokenType type, const std::string &content, std::shared_ptr<std::string>);
+            Token(TokenType t_type, const std::string &content, std::shared_ptr<std::string>);
 
             std::string str() const;
     };

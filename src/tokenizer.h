@@ -12,10 +12,11 @@ namespace wxbasic {
     class TokenizerError;
 
     class Tokenizer {
-        std::vector<wxbasic::Token> tokens;
-
         std::string source;
         std::shared_ptr<std::string> source_name;
+
+        // current token
+        std::shared_ptr<wxbasic::Token> cur_token;
 
         size_t pos;
 
@@ -33,15 +34,16 @@ namespace wxbasic {
 
         void tok_string();
 
-        void push_token(TokenType token, const std::string& content);
+        void set_token(TokenType token, const std::string& content);
 
         public:
-        void tokenize();
+
+        std::shared_ptr<wxbasic::Token> next_token();
+        std::shared_ptr<wxbasic::Token> token();
 
         void load_file(std::string file_name);
         void load_from_str(const std::string &src, const std::string &srcname);
 
-        const std::vector<wxbasic::Token>& get_tokens() const;
     };
 
 

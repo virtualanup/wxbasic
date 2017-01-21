@@ -17,7 +17,7 @@ namespace wxbasic {
             WxBasic(const std::string file_name);
             void load_file(const std::string file_name);
             void parse();
-            void print_tokens() const;
+            void print_tokens();
     };
 }
 

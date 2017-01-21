@@ -33,8 +33,6 @@ int main(int argc, char* argv[])
         if(argc == 3 && std::string(argv[1]) == "--tokens") {
             wxbasic::WxBasic basic = wxbasic::WxBasic(std::string(argv[2]));
 
-            basic.parse();
-
             basic.print_tokens();
 
             return 0;
