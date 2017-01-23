@@ -37,6 +37,12 @@ int main(int argc, char* argv[])
 
             return 0;
         }
+        else if(argc == 2) {
+            // run the file
+            wxbasic::WxBasic basic = wxbasic::WxBasic(std::string(argv[1]));
+            basic.run();
+            return 0;
+        }
     }
     catch(const wxbasic::Error &error) {
         std::cout<<error.get_message()<<std::endl;

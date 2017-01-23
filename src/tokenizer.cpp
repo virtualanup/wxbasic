@@ -77,6 +77,10 @@ namespace wxbasic {
                     else
                         throw TokenizerError("Expected = after !",*this);
 
+                case '=':
+                    set_token(TokenType::TOK_EQ, std::string(1, source[pos]));
+                    pos++;
+                    return cur_token;
 
                 case '<':
                     pos++;
@@ -114,6 +118,23 @@ namespace wxbasic {
                     return cur_token;
 
                 default:
+                    // check if it is identifier
+                    if(source[pos] == '_' ||
+                            (source[pos] >= 'A' && source[pos] <= 'Z') ||
+                            (source[pos] >= 'a' && source[pos] <= 'z')) {
+                        // identifier
+                        size_t start_pos = pos;
+                        while(source[pos] == '_' ||
+                            (source[pos] >= 'A' && source[pos] <= 'Z') ||
+                            (source[pos] >= 'a' && source[pos] <= 'z') ||
+                            (source[pos] >= '0' && source[pos] <= '9')
+                            ) {
+                            pos++;
+                        }
+                        set_token(TokenType::TOK_IDENTIFIER,source.substr(start_pos, pos-start_pos));
+                        return cur_token;
+                    }
+
                     throw TokenizerError(
                             std::string("Unexpected Character \'") + \
                             source[pos]+std::string("\'"),

@@ -2,15 +2,17 @@
 
 namespace wxbasic {
 
-    WxBasic::WxBasic() {
+    WxBasic::WxBasic():parser(tokenizer) {
 
     }
 
-    WxBasic::WxBasic(const std::string file_name) {
+    WxBasic::WxBasic(const std::string file_name) :parser(tokenizer){
         load_file(file_name);
     }
 
-    void WxBasic::parse() {
+    void WxBasic::run() {
+        // initialize the parser
+        parser.parse();
     }
 
     void WxBasic::load_file(const std::string file_name) {

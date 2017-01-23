@@ -13,11 +13,14 @@ namespace wxbasic {
         TOK_FLOAT,
         TOK_STRING,
 
+        TOK_IDENTIFIER,
+
         TOK_LT,
         TOK_LTE,
         TOK_GT,
         TOK_GTE,
         TOK_NE,
+        TOK_EQ,
 
         TOK_SHL,
         TOK_SHR,
@@ -36,11 +39,14 @@ namespace wxbasic {
         {TokenType::TOK_FLOAT,"TOK_FLOAT"},
         {TokenType::TOK_STRING,"TOK_STRING"},
 
+        {TokenType::TOK_IDENTIFIER,"TOK_IDENTIFIER"},
+
         {TokenType::TOK_LT,"TOK_LT"},
         {TokenType::TOK_LTE,"TOK_LTE"},
         {TokenType::TOK_GT,"TOK_GT"},
         {TokenType::TOK_GTE,"TOK_GTE"},
         {TokenType::TOK_NE,"TOK_NE"},
+        {TokenType::TOK_EQ,"TOK_EQ"},
 
         {TokenType::TOK_SHL,"TOK_SHL"},
         {TokenType::TOK_SHR,"TOK_SHR"},
