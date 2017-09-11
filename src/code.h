@@ -4,10 +4,10 @@
 
 namespace wxbasic {
 
-    class Code {
-        public:
-            int value;
-            Code();
-    };
+class Code {
+public:
+    int value;
+    Code();
+};
 }
 #endif // WXBASIC_CODE_H

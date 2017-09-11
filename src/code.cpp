@@ -1,5 +1,5 @@
-#include"code.h"
+#include "code.h"
 
 namespace wxbasic {
-    Code::Code(){}
+Code::Code() {}
 }

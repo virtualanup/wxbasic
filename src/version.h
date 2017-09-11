@@ -2,7 +2,7 @@
 #define WXBASIC_VERSION_H
 
 namespace wxbasic {
-    extern const char * const VERSION;
+extern const char *const VERSION;
 }
 
 #endif // WXBASIC_VERSION_H
