@@ -251,6 +251,7 @@ void Tokenizer::tok_string() {
             pos++;
             if (pos >= source.size())
                 throw TokenizerError(eol_error, *this);
+
             switch (source[pos]) {
             case 'n':
                 tok_str += "\n";
@@ -263,6 +264,9 @@ void Tokenizer::tok_string() {
                 break;
             case 't':
                 tok_str += "\t";
+                break;
+            case 'v':
+                tok_str += "\v";
                 break;
             case '\"':
                 tok_str += "\"";

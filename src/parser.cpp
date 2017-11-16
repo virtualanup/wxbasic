@@ -26,7 +26,7 @@ Parser::Parser(const std::string &file_name) {
 }
 
 const std::vector<std::shared_ptr<Code>> Parser::parse() {
-    Tokenizer tokenizer = Tokenizer();
+    Tokenizer tokenizer;
     tokenizer.load(source, filename);
     std::vector<std::shared_ptr<Code>> code;
 
