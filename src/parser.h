@@ -8,17 +8,18 @@
 namespace wxbasic {
 
 class Parser {
-
-    Tokenizer &tokenizer;
-    std::vector<std::shared_ptr<Code>> code;
-
-protected:
+private:
     void parse_statement();
 
+    std::string filename;
+    std::string source;
+
 public:
-    Parser(Tokenizer &tok);
-    void parse();
-    const std::vector<std::shared_ptr<Code>> get_code() const;
+    Parser(const std::string &sourcecode, const std::string &file_name);
+    Parser(const std::string &filename);
+    const std::vector<std::shared_ptr<Code>> parse();
+    void print_tokens();
 };
-}
+
+} // namespace wxbasic
 #endif // WXBASIC_PARSER_H

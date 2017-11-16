@@ -149,26 +149,7 @@ std::shared_ptr<wxbasic::Token> Tokenizer::token() {
     return cur_token;
 }
 
-void Tokenizer::load_file(std::string file_name) {
-    // try to load the file
-    std::ifstream input_file(file_name);
-
-    if (!input_file)
-        throw Error("Can't open file \"" + file_name + "\"");
-
-    input_file.seekg(0, std::ios::end);
-    source.reserve(input_file.tellg());
-    input_file.seekg(0, std::ios::beg);
-
-    source.assign((std::istreambuf_iterator<char>(input_file)),
-                  std::istreambuf_iterator<char>());
-
-    source_name = std::shared_ptr<std::string>(new std::string(file_name));
-
-    pos = 0;
-}
-
-void Tokenizer::load_from_str(const std::string &src,
+void Tokenizer::load(const std::string &src,
                               const std::string &srcname = "unnamed") {
     source = src;
 
@@ -307,4 +288,4 @@ void Tokenizer::set_token(TokenType token, const std::string &content) {
     cur_token =
         std::shared_ptr<wxbasic::Token>(new Token(token, content, source_name));
 }
-}
+} // namespace wxbasic

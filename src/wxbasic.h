@@ -11,19 +11,15 @@
 namespace wxbasic {
 
 class WxBasic {
-
-    Parser parser;
-    Tokenizer tokenizer;
-
+    std::vector<std::unique_ptr<Code>> code;
 public:
     WxBasic();
     WxBasic(const std::string file_name);
+
     void load_file(const std::string file_name);
-
     void print_tokens();
-
     void run();
 };
-}
+} // namespace wxbasic
 
 #endif // WXBASIC_H

@@ -56,7 +56,7 @@ const static std::map<TokenType, std::string> TokenNames = {
     {TokenType::TOK_LPAREN, "TOK_LPAREN"},
     {TokenType::TOK_RPAREN, "TOK_RPAREN"},
 
-    {TokenType::TOK_RPAREN, "TOK_SEPERATOR"},
+    {TokenType::TOK_SEPERATOR, "TOK_SEPERATOR"},
 
     {TokenType::TOK_EOF, "TOK_EOF"},
 };

@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "error.h"
+#include "parser.h"
 #include "version.h"
 #include "wxbasic.h"
 
@@ -29,10 +30,9 @@ int main(int argc, char *argv[]) {
     try {
 
         if (argc == 3 && std::string(argv[1]) == "--tokens") {
-            wxbasic::WxBasic basic = wxbasic::WxBasic(std::string(argv[2]));
-
-            basic.print_tokens();
-
+            std::cout << "Tokens : " << std::endl;
+            wxbasic::Parser parser = wxbasic::Parser(std::string(argv[2]));
+            parser.print_tokens();
             return 0;
         } else if (argc == 2) {
             // run the file
@@ -43,8 +43,6 @@ int main(int argc, char *argv[]) {
     } catch (const wxbasic::Error &error) {
         std::cout << error.get_message() << std::endl;
         return 1;
-    } catch (...) {
-        std::cout << "Unknown Error" << std::endl;
     }
 
     std::cout << error << std::endl;

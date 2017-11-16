@@ -10,4 +10,4 @@ Token::Token(TokenType t_type, const std::string &content,
 std::string Token::str() const {
     return TokenNames.at(type) + " - \"" + content + "\"";
 }
-}
+} // namespace wxbasic

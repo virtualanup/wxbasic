@@ -39,8 +39,7 @@ public:
     std::shared_ptr<wxbasic::Token> next_token();
     std::shared_ptr<wxbasic::Token> token();
 
-    void load_file(std::string file_name);
-    void load_from_str(const std::string &src, const std::string &srcname);
+    void load(const std::string &src, const std::string &srcname);
 };
 
 class TokenizerError : public Error {
@@ -49,5 +48,5 @@ public:
         : Error(error, tokenizer.pos, tokenizer.source,
                 *tokenizer.source_name){};
 };
-}
+} // namespace wxbasic
 #endif // WXBASIC_TOKENIZER_H
