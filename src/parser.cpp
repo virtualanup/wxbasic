@@ -33,7 +33,7 @@ const std::vector<std::shared_ptr<Code>> Parser::parse() {
     tokenizer.load(source, filename);
 
     // Vector of bytecode
-    std::vector<std::shared_ptr<Code>> code;
+    code.clear();
 
     while (tokenizer.next_token()->type != TokenType::TOK_EOF) {
         parse_statement();
@@ -42,7 +42,10 @@ const std::vector<std::shared_ptr<Code>> Parser::parse() {
     return code;
 }
 
-void Parser::parse_statement() {}
+// Parse a single statement
+void Parser::parse_statement() {
+
+}
 
 void Parser::print_tokens() {
     tokenizer.load(source, filename);

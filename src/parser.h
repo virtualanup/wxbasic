@@ -13,6 +13,7 @@ private:
 
     std::string filename;
     std::string source;
+    std::vector< std::shared_ptr<Code>> code;
 
     void parse_statement();
 
