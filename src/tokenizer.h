@@ -39,7 +39,10 @@ public:
     std::shared_ptr<wxbasic::Token> next_token();
     std::shared_ptr<wxbasic::Token> token();
 
+    bool is_token(TokenType);
+
     void load(const std::string &src, const std::string &srcname);
+    int get_pos() const;
 };
 
 class TokenizerError : public Error {

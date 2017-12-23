@@ -7,21 +7,35 @@
 
 namespace wxbasic {
 
+class ParserError;
+
 class Parser {
 private:
     Tokenizer tokenizer;
 
-    std::string filename;
+    std::string source_name;
     std::string source;
-    std::vector< std::shared_ptr<Code>> code;
+    std::vector<std::shared_ptr<Code>> code;
 
     void parse_statement();
+    void parse_seperator();
+    bool is_seperator();
+    void skip();
+
+    friend ParserError;
 
 public:
     Parser(const std::string &sourcecode, const std::string &file_name);
     Parser(const std::string &filename);
     const std::vector<std::shared_ptr<Code>> parse();
     void print_tokens();
+};
+
+class ParserError : public Error {
+public:
+    ParserError(const std::string &error, const Parser &parser)
+        : Error(error, parser.tokenizer.get_pos(), parser.source,
+                parser.source_name){};
 };
 
 } // namespace wxbasic
