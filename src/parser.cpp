@@ -11,6 +11,7 @@ Parser::Parser(const std::string &sourcecode, const std::string &file_name) {
 
 Parser::Parser(const std::string &file_name) {
     filename = file_name;
+
     // try to load the file
     std::ifstream input_file(filename);
 
@@ -25,12 +26,16 @@ Parser::Parser(const std::string &file_name) {
                   std::istreambuf_iterator<char>());
 }
 
+// Parse the source code
 const std::vector<std::shared_ptr<Code>> Parser::parse() {
-    Tokenizer tokenizer;
+
+    // Load the content
     tokenizer.load(source, filename);
+
+    // Vector of bytecode
     std::vector<std::shared_ptr<Code>> code;
 
-    while (tokenizer.token()->type != TokenType::TOK_EOF) {
+    while (tokenizer.next_token()->type != TokenType::TOK_EOF) {
         parse_statement();
         tokenizer.next_token();
     }
@@ -40,7 +45,6 @@ const std::vector<std::shared_ptr<Code>> Parser::parse() {
 void Parser::parse_statement() {}
 
 void Parser::print_tokens() {
-    Tokenizer tokenizer = Tokenizer();
     tokenizer.load(source, filename);
     while (tokenizer.next_token()->type != TokenType::TOK_EOF) {
         std::cout << tokenizer.token()->str() << std::endl;

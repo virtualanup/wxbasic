@@ -15,7 +15,4 @@ void WxBasic::load_file(const std::string file_name) {
     parser.parse();
 }
 
-void WxBasic::print_tokens() {
-    // print out the tokens
-}
 } // namespace wxbasic

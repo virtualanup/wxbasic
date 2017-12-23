@@ -17,7 +17,6 @@ public:
     WxBasic(const std::string file_name);
 
     void load_file(const std::string file_name);
-    void print_tokens();
     void run();
 };
 } // namespace wxbasic

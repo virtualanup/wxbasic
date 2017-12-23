@@ -9,10 +9,12 @@ namespace wxbasic {
 
 class Parser {
 private:
-    void parse_statement();
+    Tokenizer tokenizer;
 
     std::string filename;
     std::string source;
+
+    void parse_statement();
 
 public:
     Parser(const std::string &sourcecode, const std::string &file_name);

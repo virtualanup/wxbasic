@@ -1,3 +1,4 @@
+.PHONY: test
 DEBUG = -g
 CFLAGS = -Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter -c $(DEBUG)
 LFLAGS = -Wall -lm
@@ -20,6 +21,9 @@ $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 
 $(NAME): $(OBJS)
 	$(CXX) -o $(NAME) $^ $(LFLAGS)
+
+test:
+	./build/wxbasic --tokens ./build/program
 
 clean:
 	rm -rf $(OBJDIR)
