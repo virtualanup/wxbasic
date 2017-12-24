@@ -36,6 +36,11 @@ enum class TokenType {
     TOK_PRINT,
     TOK_INPUT,
 
+    TOK_NOT,
+    TOK_OR,
+    TOK_AND,
+    TOK_INV,
+
     TOK_SEPERATOR,
     TOK_EOF,
 };
@@ -68,6 +73,12 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
     {TokenType::TOK_PRINT, "TOK_PRINT"},
     {TokenType::TOK_INPUT, "TOK_INPUT"},
 
+    {TokenType::TOK_NOT, "TOK_NOT"},
+    {TokenType::TOK_OR, "TOK_OR"},
+    {TokenType::TOK_AND, "TOK_AND"},
+    {TokenType::TOK_INV, "TOK_INV"},
+
+
     {TokenType::TOK_SEPERATOR, "TOK_SEPERATOR"},
 
     {TokenType::TOK_EOF, "TOK_EOF"},
@@ -76,6 +87,12 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
 const static std::unordered_map<std::string, TokenType> Keywords = {
     {"print", TokenType::TOK_PRINT},
     {"input", TokenType::TOK_INPUT},
+
+    {"not", TokenType::TOK_NOT},
+    {"or", TokenType::TOK_OR},
+    {"and", TokenType::TOK_AND},
+
+    {"inv", TokenType::TOK_INV},
 };
 
 class Token {

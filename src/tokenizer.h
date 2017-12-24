@@ -38,8 +38,8 @@ protected:
 public:
     std::shared_ptr<wxbasic::Token> next_token();
     std::shared_ptr<wxbasic::Token> token();
-
-    bool is_token(TokenType);
+    TokenType token_type() const;
+    bool is_token(TokenType) const;
 
     void load(const std::string &src, const std::string &srcname);
     int get_pos() const;

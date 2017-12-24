@@ -104,7 +104,70 @@ void Parser::parse_print() {
     }
 }
 
-void Parser::parse_expression(int) {}
+void Parser::parse_expression(int prior_strength) {}
+
+void Parser::parse_operand() {
+    switch (tokenizer.token_type()) {
+
+        // unary NOT
+    case TokenType::TOK_NOT:
+        skip();
+        parse_seperator(false);
+        parse_operand();
+        code.emit_op(OpcodeType::OP_NOT);
+        break;
+
+        // unary inverse
+    case TokenType::TOK_INV:
+        skip();
+        parse_seperator(false);
+        parse_operand();
+        code.emit_op(OpcodeType::OP_INV);
+        break;
+
+    case TokenType::TOK_LPAREN:
+        skip();
+        parse_seperator(false);
+        parse_expression(0);
+        expect(TokenType::TOK_RPAREN, ")");
+        break;
+
+    case TokenType::TOK_BINOP:
+        // might be unary + or -
+        if (tokenizer.token()->content == "+") {
+            skip();
+            parse_seperator(false);
+            parse_expression(0);
+        } else if (tokenizer.token()->content == "-") {
+            skip();
+            parse_seperator(false);
+            if (tokenizer.token_type() == TokenType::TOK_FLOAT ||
+                tokenizer.token_type() == TokenType::TOK_INTEGER) {
+                // Add - to the float value
+                tokenizer.token()->content = "-" + tokenizer.token()->content;
+                parse_expression(0);
+            } else {
+                parse_expression(0);
+                code.emit_op(OpcodeType::OP_NEGATE);
+            }
+        } else {
+            throw ParserError("Expected an expression", *this);
+        }
+
+        break;
+
+    default:
+        throw ParserError("Expected an expression", *this);
+    }
+}
+
+void Parser::expect(TokenType expected, const std::string &exp_str) {
+    if (tokenizer.token_type() != expected)
+        throw ParserError("Expected " + exp_str + " not " +
+                              tokenizer.token()->content,
+                          *this);
+    skip();
+}
 
 bool Parser::is_seperator() {
     return tokenizer.is_token(TokenType::TOK_SEPERATOR) ||
@@ -116,11 +179,11 @@ void Parser::skip() {
     tokenizer.next_token();
 }
 
-void Parser::parse_seperator() {
+void Parser::parse_seperator(bool must_exist) {
     if (!is_seperator()) {
-        throw ParserError("Expected end of line", *this);
-    }
-    if (!tokenizer.is_token(TokenType::TOK_EOF))
+        if (must_exist)
+            throw ParserError("Expected end of line", *this);
+    } else if (!tokenizer.is_token(TokenType::TOK_EOF))
         skip();
 }
 

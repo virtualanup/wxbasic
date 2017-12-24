@@ -19,10 +19,12 @@ private:
     Code code;
 
     void parse_expression(int);
+    void parse_operand();
     void parse_statement();
-    void parse_seperator();
+    void parse_seperator(bool must_exist=true);
     void parse_print();
 
+    void expect(TokenType, const std::string&);
     bool is_seperator();
     void skip();
 

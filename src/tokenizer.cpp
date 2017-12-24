@@ -308,7 +308,12 @@ void Tokenizer::set_token(TokenType token, const std::string &content) {
         std::shared_ptr<wxbasic::Token>(new Token(token, content, source_name));
 }
 
-bool Tokenizer::is_token(TokenType tok) { return cur_token->type == tok; }
+bool Tokenizer::is_token(TokenType tok) const{ return cur_token->type == tok; }
+
+TokenType Tokenizer::token_type() const
+{
+    return cur_token->type;
+}
 int Tokenizer::get_pos() const { return pos; }
 
 } // namespace wxbasic
