@@ -27,7 +27,7 @@ Parser::Parser(const std::string &file_name) {
 }
 
 // Parse the source code
-const std::vector<std::shared_ptr<Code>> Parser::parse() {
+Code Parser::parse() {
 
     // Load the content
     tokenizer.load(source, source_name);
@@ -62,11 +62,50 @@ void Parser::parse_statement() {
 
 void Parser::parse_print() {
     skip();
-    if(is_seperator())
-    {
+    if (is_seperator()) {
         // empty print statement.
+        code.emit_op(OpcodeType::OP_EMITLN);
+        return;
+    }
+    while (1) {
+        // leading ;
+        if (tokenizer.is_token(TokenType::TOK_SEMICOLON)) {
+            skip();
+            if (is_seperator())
+                break;
+        }
+
+        // leading ,
+        else if (tokenizer.is_token(TokenType::TOK_COMMA)) {
+            skip();
+            code.emit_op(OpcodeType::OP_EMITTAB);
+            if (is_seperator()) {
+                code.emit_op(OpcodeType::OP_EMITLN);
+                break;
+            }
+        } else if (is_seperator()) {
+            break;
+        } else {
+            parse_expression(0);
+            // trailing values
+            if (tokenizer.is_token(TokenType::TOK_SEMICOLON)) {
+                skip();
+                code.emit_op(OpcodeType::OP_PRINT);
+            } else if (tokenizer.is_token(TokenType::TOK_COMMA)) {
+                skip();
+                code.emit_op(OpcodeType::OP_EMITTAB);
+                if (is_seperator()) {
+                    code.emit_op(OpcodeType::OP_EMITLN);
+                }
+            } else {
+                break;
+            }
+        }
     }
 }
+
+void Parser::parse_expression(int) {}
+
 bool Parser::is_seperator() {
     return tokenizer.is_token(TokenType::TOK_SEPERATOR) ||
            tokenizer.is_token(TokenType::TOK_EOF);

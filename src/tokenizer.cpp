@@ -54,6 +54,14 @@ std::shared_ptr<wxbasic::Token> Tokenizer::next_token() {
             pos++;
             return cur_token;
 
+        case ';':
+            set_token(TokenType::TOK_SEMICOLON, ";");
+            pos++;
+            return cur_token;
+        case ',':
+            set_token(TokenType::TOK_COMMA, ",");
+            pos++;
+            return cur_token;
         case ')':
             set_token(TokenType::TOK_RPAREN, ")");
             pos++;

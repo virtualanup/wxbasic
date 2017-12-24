@@ -15,11 +15,14 @@ private:
 
     std::string source_name;
     std::string source;
-    std::vector<std::shared_ptr<Code>> code;
 
+    Code code;
+
+    void parse_expression(int);
     void parse_statement();
     void parse_seperator();
     void parse_print();
+
     bool is_seperator();
     void skip();
 
@@ -28,7 +31,7 @@ private:
 public:
     Parser(const std::string &sourcecode, const std::string &file_name);
     Parser(const std::string &filename);
-    const std::vector<std::shared_ptr<Code>> parse();
+    Code parse();
     void print_tokens();
 };
 

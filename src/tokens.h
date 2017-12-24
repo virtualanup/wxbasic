@@ -30,6 +30,9 @@ enum class TokenType {
     TOK_LPAREN,
     TOK_RPAREN,
 
+    TOK_COMMA,
+    TOK_SEMICOLON,
+
     TOK_PRINT,
     TOK_INPUT,
 
@@ -58,6 +61,9 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
 
     {TokenType::TOK_LPAREN, "TOK_LPAREN"},
     {TokenType::TOK_RPAREN, "TOK_RPAREN"},
+
+    {TokenType::TOK_COMMA, "TOK_COMMA"},
+    {TokenType::TOK_SEMICOLON, "TOK_SEMICOLON"},
 
     {TokenType::TOK_PRINT, "TOK_PRINT"},
     {TokenType::TOK_INPUT, "TOK_INPUT"},
