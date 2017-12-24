@@ -43,8 +43,30 @@ const std::vector<std::shared_ptr<Code>> Parser::parse() {
 }
 
 // Parse a single statement
-void Parser::parse_statement() {}
+void Parser::parse_statement() {
 
+    // empty line
+    if (is_seperator()) {
+        parse_seperator();
+        return;
+    }
+
+    switch (tokenizer.token()->type) {
+    case TokenType::TOK_PRINT:
+        parse_print();
+        break;
+    default:
+        break;
+    }
+}
+
+void Parser::parse_print() {
+    skip();
+    if(is_seperator())
+    {
+        // empty print statement.
+    }
+}
 bool Parser::is_seperator() {
     return tokenizer.is_token(TokenType::TOK_SEPERATOR) ||
            tokenizer.is_token(TokenType::TOK_EOF);

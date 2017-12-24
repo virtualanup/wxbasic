@@ -19,6 +19,7 @@ private:
 
     void parse_statement();
     void parse_seperator();
+    void parse_print();
     bool is_seperator();
     void skip();
 

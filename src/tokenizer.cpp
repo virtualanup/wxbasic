@@ -129,8 +129,15 @@ std::shared_ptr<wxbasic::Token> Tokenizer::next_token() {
                         ((source[pos] & 0x80) != 0))) {
                     pos++;
                 }
-                set_token(TokenType::TOK_IDENTIFIER,
-                          source.substr(start_pos, pos - start_pos));
+
+                std::string content = source.substr(start_pos, pos - start_pos);
+                // check for built in keyword
+                if (Keywords.count(content) != 0) {
+                    set_token(Keywords.at(content), content);
+                } else {
+                    set_token(TokenType::TOK_IDENTIFIER,
+                              source.substr(start_pos, pos - start_pos));
+                }
                 return cur_token;
             }
 
@@ -293,10 +300,7 @@ void Tokenizer::set_token(TokenType token, const std::string &content) {
         std::shared_ptr<wxbasic::Token>(new Token(token, content, source_name));
 }
 
-bool Tokenizer::is_token(TokenType tok)
-{
-    return cur_token->type == tok;
-}
+bool Tokenizer::is_token(TokenType tok) { return cur_token->type == tok; }
 int Tokenizer::get_pos() const { return pos; }
 
 } // namespace wxbasic

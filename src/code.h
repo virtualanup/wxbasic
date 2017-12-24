@@ -3,16 +3,21 @@
 
 #include <vector>
 
+#include "opcode.h"
 namespace wxbasic {
 
+enum ByteCodeType {
+
+};
+// Bytecode class
 class Code {
 public:
-    int last;                   // value of the last bytecode added
-    std::vector<int> pcode;     // bytecode array
-    std::vector<int> backpatch; // list of address to backpatch
+    int last;                      // value of the last bytecode added
+    std::vector<OpcodeType> pcode; // bytecode array
+    std::vector<int> backpatch;    // list of address to backpatch
     Code();
-    void emit(int code);
-    void emit_op(int code);
+    void emit(OpcodeType code);
+    void emit_op(OpcodeType code);
 };
 
 } // namespace wxbasic

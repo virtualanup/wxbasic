@@ -2,9 +2,9 @@
 #ifndef WXBASIC_TOKENS_H
 #define WXBASIC_TOKENS_H
 
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 namespace wxbasic {
 
@@ -30,11 +30,14 @@ enum class TokenType {
     TOK_LPAREN,
     TOK_RPAREN,
 
+    TOK_PRINT,
+    TOK_INPUT,
+
     TOK_SEPERATOR,
     TOK_EOF,
 };
 
-const static std::map<TokenType, std::string> TokenNames = {
+const static std::unordered_map<TokenType, std::string> TokenNames = {
     {TokenType::TOK_INTEGER, "TOK_INTEGER"},
     {TokenType::TOK_FLOAT, "TOK_FLOAT"},
     {TokenType::TOK_STRING, "TOK_STRING"},
@@ -56,9 +59,17 @@ const static std::map<TokenType, std::string> TokenNames = {
     {TokenType::TOK_LPAREN, "TOK_LPAREN"},
     {TokenType::TOK_RPAREN, "TOK_RPAREN"},
 
+    {TokenType::TOK_PRINT, "TOK_PRINT"},
+    {TokenType::TOK_INPUT, "TOK_INPUT"},
+
     {TokenType::TOK_SEPERATOR, "TOK_SEPERATOR"},
 
     {TokenType::TOK_EOF, "TOK_EOF"},
+};
+
+const static std::unordered_map<std::string, TokenType> Keywords = {
+    {"print", TokenType::TOK_PRINT},
+    {"input", TokenType::TOK_INPUT},
 };
 
 class Token {
@@ -72,6 +83,6 @@ public:
 
     std::string str() const;
 };
-}
+} // namespace wxbasic
 
 #endif // WXBASIC_TOKENS_H

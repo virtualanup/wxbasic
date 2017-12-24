@@ -3,9 +3,9 @@
 namespace wxbasic {
 Code::Code() {}
 
-void Code::emit(int code) { pcode.push_back(code); }
+void Code::emit(OpcodeType code) { pcode.push_back(code); }
 
-void Code::emit_op(int code) {
+void Code::emit_op(OpcodeType code) {
     pcode.push_back(code);
     last = code;
 }
