@@ -2,29 +2,22 @@
 
 namespace wxbasic {
 
-// This is used to hash the <name, level> pair
-// TODO: Replace this with something better
-template <class T1, class T2>
-std::size_t pair_hash::operator()(const std::pair<T1, T2> &p) const {
-    auto h1 = std::hash<T1>{}(p.first);
-    auto h2 = std::hash<T2>{}(p.second);
-    return h1 ^ h2;
+SymbolTable::SymbolTable() {
+    current_scope = global_scope;
+
+    // Create a global scope
+    table.push_back(SymbolTableObj());
+
+    // Declare the global scope
+    add_symbol(std::shared_ptr<FunctionSymbol>(new FunctionSymbol("__global")));
 }
-SymbolTable::SymbolTable() : current_scope(0) {}
+
 SymbolTable::~SymbolTable() {}
 
-void SymbolTable::unused(const std::string &name) {
-    if (name.size() == 0 || name[0] == '_')
-        return;
+void SymbolTable::unused(const std::string &name) {}
 
-    if (!isalnum(name[0]))
-        throw Error(name + " is not a valid name");
-
-    // If item doesn't exist, return
-    if (table.count(make_pair(name, current_scope)) == 0)
-        return;
-
-    Symbol sym = table[make_pair(name, current_scope)];
+void SymbolTable::add_symbol(std::shared_ptr<Symbol> sym) {
+    table[current_scope][sym->name] = sym;
 }
 
 } // namespace wxbasic

@@ -4,6 +4,8 @@
 
 #include "parser.h"
 #include "tokenizer.h"
+#include"symbol.h"
+
 #include <iostream>
 #include <memory>
 #include <string>
@@ -11,7 +13,7 @@
 namespace wxbasic {
 
 class WxBasic {
-    std::vector<std::unique_ptr<Code>> code;
+    SymbolTable sym_table;
 public:
     WxBasic();
     WxBasic(const std::string file_name);

@@ -4,12 +4,15 @@
 
 namespace wxbasic {
 
-Parser::Parser(const std::string &sourcecode, const std::string &file_name) {
+Parser::Parser(const std::string &sourcecode, const std::string &file_name,
+               SymbolTable &symbol_table)
+    : sym_table(symbol_table) {
     source_name = file_name;
     source = sourcecode;
 }
 
-Parser::Parser(const std::string &file_name) {
+Parser::Parser(const std::string &file_name, SymbolTable &symbol_table)
+    : sym_table(symbol_table) {
     source_name = file_name;
 
     // try to load the file

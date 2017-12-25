@@ -78,18 +78,15 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
     {TokenType::TOK_AND, "TOK_AND"},
     {TokenType::TOK_INV, "TOK_INV"},
 
-
     {TokenType::TOK_SEPERATOR, "TOK_SEPERATOR"},
 
     {TokenType::TOK_EOF, "TOK_EOF"},
 };
 
 const static std::unordered_map<std::string, TokenType> Keywords = {
-    {"print", TokenType::TOK_PRINT},
-    {"input", TokenType::TOK_INPUT},
+    {"print", TokenType::TOK_PRINT}, {"input", TokenType::TOK_INPUT},
 
-    {"not", TokenType::TOK_NOT},
-    {"or", TokenType::TOK_OR},
+    {"not", TokenType::TOK_NOT},     {"or", TokenType::TOK_OR},
     {"and", TokenType::TOK_AND},
 
     {"inv", TokenType::TOK_INV},
@@ -99,8 +96,13 @@ class Token {
 public:
     wxbasic::TokenType type;
     std::string content;
-    std::shared_ptr<std::string> source_name;
 
+    union {
+        long long int_val;
+        long double float_val;
+    } value;
+
+    std::shared_ptr<std::string> source_name;
     Token(TokenType t_type, const std::string &content,
           std::shared_ptr<std::string>);
 

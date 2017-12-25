@@ -3,6 +3,7 @@
 
 #include "error.h"
 #include "parser.h"
+#include "symbol.h"
 #include "version.h"
 #include "wxbasic.h"
 
@@ -31,7 +32,8 @@ int main(int argc, char *argv[]) {
 
         if (argc == 3 && std::string(argv[1]) == "--tokens") {
             std::cout << "Tokens : " << std::endl;
-            wxbasic::Parser parser = wxbasic::Parser(std::string(argv[2]));
+            wxbasic::SymbolTable table;
+            wxbasic::Parser parser = wxbasic::Parser(std::string(argv[2]), table);
             parser.print_tokens();
             return 0;
         } else if (argc == 2) {
