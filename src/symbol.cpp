@@ -2,6 +2,8 @@
 
 namespace wxbasic {
 
+Symbol::~Symbol() {}
+
 SymbolTable::SymbolTable() {
     current_scope = global_scope;
 

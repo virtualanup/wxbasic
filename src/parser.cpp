@@ -144,10 +144,15 @@ void Parser::parse_operand() {
         } else if (tokenizer.token()->content == "-") {
             skip();
             parse_seperator(false);
-            if (tokenizer.token_type() == TokenType::TOK_FLOAT ||
-                tokenizer.token_type() == TokenType::TOK_INTEGER) {
+            if (tokenizer.token_type() == TokenType::TOK_FLOAT) {
                 // Add - to the float value
-                tokenizer.token()->content = "-" + tokenizer.token()->content;
+                tokenizer.token()->value.float_val =
+                    -tokenizer.token()->value.float_val;
+                parse_expression(0);
+            } else if (tokenizer.token_type() == TokenType::TOK_INTEGER) {
+                // Add - to the integer value
+                tokenizer.token()->value.int_val =
+                    -tokenizer.token()->value.int_val;
                 parse_expression(0);
             } else {
                 parse_expression(0);

@@ -46,7 +46,7 @@ public:
 
 struct LiteralSymbol : public Symbol {
     LiteralSymbol(const std::string &sym_name) : Symbol(sym_name) {}
-    virtual ~LiteralSymbol() {}
+    ~LiteralSymbol() {}
 };
 
 struct FunctionSymbol : public Symbol {
@@ -59,7 +59,7 @@ struct FunctionSymbol : public Symbol {
         : Symbol(sym_name), referenced(false) {
         builtin = NULL;
     }
-    virtual ~FunctionSymbol() {}
+    ~FunctionSymbol() {}
 };
 
 // global scope always has index 0

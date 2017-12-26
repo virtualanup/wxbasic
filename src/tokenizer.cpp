@@ -1,6 +1,7 @@
 #include "tokenizer.h"
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 namespace wxbasic {
 
@@ -303,17 +304,22 @@ void Tokenizer::tok_string() {
 }
 
 void Tokenizer::set_token(TokenType token, const std::string &content) {
-
     cur_token =
         std::shared_ptr<wxbasic::Token>(new Token(token, content, source_name));
+
+    if (token == TokenType::TOK_INTEGER || token == TokenType::TOK_FLOAT) {
+        std::stringstream itemp(content);
+
+        if (token == TokenType::TOK_INTEGER)
+            itemp >> cur_token->value.int_val;
+        else if (token == TokenType::TOK_FLOAT)
+            itemp >> cur_token->value.float_val;
+    }
 }
 
-bool Tokenizer::is_token(TokenType tok) const{ return cur_token->type == tok; }
+bool Tokenizer::is_token(TokenType tok) const { return cur_token->type == tok; }
 
-TokenType Tokenizer::token_type() const
-{
-    return cur_token->type;
-}
+TokenType Tokenizer::token_type() const { return cur_token->type; }
 int Tokenizer::get_pos() const { return pos; }
 
 } // namespace wxbasic
