@@ -33,13 +33,17 @@ enum class TokenType {
     TOK_COMMA,
     TOK_SEMICOLON,
 
-    TOK_PRINT,
+    // keywords
+    TOK_ABSTRACT,
+    TOK_AND,
+    TOK_FUNCTION,
     TOK_INPUT,
-
+    TOK_INV,
     TOK_NOT,
     TOK_OR,
-    TOK_AND,
-    TOK_INV,
+    TOK_PRINT,
+    TOK_SHARED,
+    TOK_VIRTUAL,
 
     TOK_SEPERATOR,
     TOK_EOF,
@@ -70,13 +74,16 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
     {TokenType::TOK_COMMA, "TOK_COMMA"},
     {TokenType::TOK_SEMICOLON, "TOK_SEMICOLON"},
 
-    {TokenType::TOK_PRINT, "TOK_PRINT"},
+    {TokenType::TOK_ABSTRACT, "TOK_ABSTRACT"},
+    {TokenType::TOK_AND, "TOK_AND"},
+    {TokenType::TOK_FUNCTION, "TOK_FUNCTION"},
     {TokenType::TOK_INPUT, "TOK_INPUT"},
-
+    {TokenType::TOK_INV, "TOK_INV"},
     {TokenType::TOK_NOT, "TOK_NOT"},
     {TokenType::TOK_OR, "TOK_OR"},
-    {TokenType::TOK_AND, "TOK_AND"},
-    {TokenType::TOK_INV, "TOK_INV"},
+    {TokenType::TOK_PRINT, "TOK_PRINT"},
+    {TokenType::TOK_SHARED, "TOK_SHARED"},
+    {TokenType::TOK_VIRTUAL, "TOK_VIRTUAL"},
 
     {TokenType::TOK_SEPERATOR, "TOK_SEPERATOR"},
 
@@ -84,12 +91,16 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
 };
 
 const static std::unordered_map<std::string, TokenType> Keywords = {
-    {"print", TokenType::TOK_PRINT}, {"input", TokenType::TOK_INPUT},
-
-    {"not", TokenType::TOK_NOT},     {"or", TokenType::TOK_OR},
+    {"abstract", TokenType::TOK_ABSTRACT},
     {"and", TokenType::TOK_AND},
-
+    {"function", TokenType::TOK_FUNCTION},
+    {"input", TokenType::TOK_INPUT},
     {"inv", TokenType::TOK_INV},
+    {"not", TokenType::TOK_NOT},
+    {"or", TokenType::TOK_OR},
+    {"print", TokenType::TOK_PRINT},
+    {"shared", TokenType::TOK_SHARED},
+    {"virtual", TokenType::TOK_VIRTUAL},
 };
 
 class Token {

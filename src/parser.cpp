@@ -202,4 +202,50 @@ void Parser::print_tokens() {
     }
 }
 
+TokenType Parser::skip_line() {
+
+    // skip until EOF or EOL is encountered.
+    while (tokenizer.token_type() != TokenType::TOK_EOF &&
+           tokenizer.token_type() != TokenType::TOK_EOF)
+        tokenizer.next_token();
+    // Get next token
+    tokenizer.next_token();
+    // return its type
+    return tokenizer.token_type();
+}
+// Scans for routines and classes in the source
+// This will help us to resolve forward references
+void Parser::scan_routines() {
+    ClassSymbol *current_class = NULL;
+    int flags;
+    // parse until EOF is reached
+    while (skip_line() != TokenType::TOK_EOF) {
+        if (tokenizer.is_token(TokenType::TOK_ABSTRACT) &&
+            current_class != NULL) {
+            flags = SYM_ISABSTRACT;
+            skip();
+        } else if (tokenizer.is_token(TokenType::TOK_SHARED) &&
+                   current_class != NULL) {
+            flags = SYM_ISSHARED;
+            skip();
+        } else if (tokenizer.is_token(TokenType::TOK_VIRTUAL) &&
+                   current_class != NULL) {
+            flags = SYM_ISVIRTUAL;
+            skip();
+        } else
+            flags = 0;
+
+        if (tokenizer.is_token(TokenType::TOK_FUNCTION)) {
+            if (current_class != NULL && current_class->is_abstract() &&
+                (flags & SYM_ISABSTRACT != 0)) {
+                throw ParserError(
+                    "Abstract methods can only be defined in Abstract Classes",
+                    *this);
+            }
+
+            // Get the function name
+            skip();
+        }
+    }
+}
 } // namespace wxbasic

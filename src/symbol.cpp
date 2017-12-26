@@ -16,7 +16,9 @@ SymbolTable::SymbolTable() {
 
 SymbolTable::~SymbolTable() {}
 
-void SymbolTable::unused(const std::string &name) {}
+bool SymbolTable::unused(const std::string &name) {
+    return true;
+}
 
 void SymbolTable::add_symbol(std::shared_ptr<Symbol> sym) {
     table[current_scope][sym->name] = sym;

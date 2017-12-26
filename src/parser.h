@@ -30,6 +30,9 @@ private:
     bool is_seperator();
     void skip();
 
+
+    TokenType skip_line();
+    void scan_routines();
     friend ParserError;
 
 public:

@@ -9,24 +9,24 @@
 
 namespace wxbasic {
 
-#define W_SYM_ISNATIVE 1   // native datatype
-#define W_SYM_ISPRIVATE 2  // not publicly visible
-#define W_SYM_ISABSTRACT 4 // applies to Class or method
-#define W_SYM_ISVIRTUAL 8  // applies to method
-#define W_SYM_ISSHARED 16  // can be called without instantiation
+#define SYM_ISNATIVE 1   // native datatype
+#define SYM_ISPRIVATE 2  // not publicly visible
+#define SYM_ISABSTRACT 4 // applies to Class or method
+#define SYM_ISVIRTUAL 8  // applies to method
+#define SYM_ISSHARED 16  // can be called without instantiation
 
 // types of symbols
 enum class SymbolType {
-    W_SYM_KEYWORD,       // keyword
-    W_SYM_LITERAL,       // literal
-    W_SYM_VARIABLE,      // variable
-    W_SYM_CONSTANT,      // constant
-    W_SYM_BUILTIN,       // builtin function
-    W_SYM_FUNCTION,      // user defined function
-    W_SYM_SUB,           // user defined sub
-    W_SYM_USER_CLASS,    // user class name
-    W_SYM_BUILTIN_CLASS, // builtin class name
-    W_SYM_OBJECT         // instance of a class object
+    SYM_KEYWORD,       // keyword
+    SYM_LITERAL,       // literal
+    SYM_VARIABLE,      // variable
+    SYM_CONSTANT,      // constant
+    SYM_BUILTIN,       // builtin function
+    SYM_FUNCTION,      // user defined function
+    SYM_SUB,           // user defined sub
+    SYM_USER_CLASS,    // user class name
+    SYM_BUILTIN_CLASS, // builtin class name
+    SYM_OBJECT         // instance of a class object
 };
 
 struct Symbol {
@@ -62,6 +62,19 @@ struct FunctionSymbol : public Symbol {
     ~FunctionSymbol() {}
 };
 
+struct ClassSymbol : public Symbol {
+    bool abstract;
+
+    ClassSymbol(const std::string &sym_name, bool is_abstract)
+        : Symbol(sym_name) {
+            abstract = is_abstract;
+    }
+
+    bool is_abstract(){return abstract;}
+
+    ~ClassSymbol() {}
+};
+
 // global scope always has index 0
 static const int global_scope = 0;
 
@@ -71,10 +84,11 @@ class SymbolTable {
     std::vector<SymbolTableObj> table;
     int current_scope;
     int class_scope;
+
 public:
     SymbolTable();
     virtual ~SymbolTable();
-    void unused(const std::string &);
+    bool unused(const std::string &);
     void add_symbol(std::shared_ptr<Symbol> sym);
 };
 
