@@ -144,8 +144,7 @@ std::shared_ptr<wxbasic::Token> Tokenizer::next_token() {
                 if (Keywords.count(content) != 0) {
                     set_token(Keywords.at(content), content);
                 } else {
-                    set_token(TokenType::TOK_IDENTIFIER,
-                              source.substr(start_pos, pos - start_pos));
+                    set_token(TokenType::TOK_IDENTIFIER, content);
                 }
                 return cur_token;
             }

@@ -29,6 +29,7 @@ Parser::Parser(const std::string &file_name, SymbolTable &symbol_table)
                   std::istreambuf_iterator<char>());
 }
 
+
 // Parse the source code
 Code Parser::parse() {
 
@@ -237,7 +238,7 @@ void Parser::scan_routines() {
 
         if (tokenizer.is_token(TokenType::TOK_FUNCTION)) {
             if (current_class != NULL && current_class->is_abstract() &&
-                (flags & SYM_ISABSTRACT != 0)) {
+                (flags & SYM_ISABSTRACT) != 0) {
                 throw ParserError(
                     "Abstract methods can only be defined in Abstract Classes",
                     *this);
@@ -245,7 +246,39 @@ void Parser::scan_routines() {
 
             // Get the function name
             skip();
+            if (!tokenizer.is_token(TokenType::TOK_IDENTIFIER)) {
+                throw ParserError("\"" + tokenizer.token()->content +
+                                      "\" is not a valid name",
+                                  *this);
+            }
+            // Make sure that the function is not already defined
+            auto prev = sym_table.unused(tokenizer.token()->content);
+            if (prev) {
+                if (prev->parent == NULL)
+                    throw ParserError(
+                        "\"" + prev->name + "\" is already defined", *this);
+                throw ParserError(
+                    "\"" + prev->name + "\" is already defined as " +
+                        prev->symbol_name() + " of " + prev->parent->name,
+                    *this);
+            }
+
+            // Inherit virtual if prior declaration was virtual
+            if(current_class != 0)
+            {
+                // Find method in the parents of class
+            }
         }
     }
 }
+
+// find method of a class
+std::shared_ptr<FunctionSymbol> ClassSymbol::find_method(const std::string&)
+{
+    // No super class
+    if(superclass == NULL)
+        return NULL;
+    return NULL;
+}
+
 } // namespace wxbasic
