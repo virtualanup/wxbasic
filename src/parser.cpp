@@ -271,14 +271,4 @@ void Parser::scan_routines() {
         }
     }
 }
-
-// find method of a class
-std::shared_ptr<FunctionSymbol> ClassSymbol::find_method(const std::string&)
-{
-    // No super class
-    if(superclass == NULL)
-        return NULL;
-    return NULL;
-}
-
 } // namespace wxbasic

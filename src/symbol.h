@@ -39,9 +39,11 @@ static const std::unordered_map<SymbolType, std::string> SymbolNames{
 
 struct Symbol {
 public:
-    SymbolType type;
-    std::string name;
-    int scope;
+    SymbolType type;  // type of the symbol
+    std::string name; // name of the symbol
+
+    int scope; // scope of this symbol
+    size_t index; // index at the symbol table
 
     std::shared_ptr<Symbol> parent;
 
@@ -72,7 +74,11 @@ struct FunctionSymbol : public Symbol {
 
 struct ClassSymbol : public Symbol {
     bool abstract;
+
+    // Class that this class inherited from
     std::shared_ptr<ClassSymbol> superclass;
+
+    std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> methods;
 
     ClassSymbol(const std::string &sym_name, bool is_abstract)
         : Symbol(sym_name) {
@@ -89,7 +95,7 @@ struct ClassSymbol : public Symbol {
 // global scope always has index 0
 static const int global_scope = 0;
 
-typedef std::unordered_map<std::string, int> SymbolTableObj;
+typedef std::unordered_map<std::string, size_t> SymbolTableObj;
 
 class SymbolTable {
     // We maintain a hash table to map the symbol name and

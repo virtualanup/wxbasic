@@ -44,6 +44,8 @@ std::shared_ptr<Symbol> SymbolTable::unused(const std::string &name) {
 void SymbolTable::add_symbol(std::shared_ptr<Symbol> sym) {
     // Append it to the symbol list
     table.push_back(sym);
+    // Store the index
+    sym->index = table.size() - 1;
     // Store the index in hash table
     index[current_scope][sym->name] = table.size() - 1;
 }
@@ -64,4 +66,19 @@ SymbolTable::find_symbol(const std::string &symbol_name) {
     // No symbol found
     return NULL;
 }
+
+// find method of a class
+std::shared_ptr<FunctionSymbol>
+ClassSymbol::find_method(const std::string &name) {
+    // Try to find the method in current scope
+    if (methods.count(name) == 1)
+        return methods.at(name);
+
+    if (superclass == NULL)
+        return NULL;
+
+    // try to find the method in superclass
+    return superclass->find_method(name);
+}
+
 } // namespace wxbasic
