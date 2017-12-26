@@ -59,20 +59,27 @@ struct LiteralSymbol : public Symbol {
     ~LiteralSymbol() {}
 };
 
-struct FunctionSymbol : public Symbol {
+// Common parent of funciton symbol and class symbol
+struct FuncClassSymbol : public Symbol {
+    int flags;
+    FuncClassSymbol(const std::string& sym_name):Symbol(sym_name){}
+    virtual ~FuncClassSymbol()=0;
+};
+
+struct FunctionSymbol : public FuncClassSymbol {
 
     bool referenced;         // If this function is referenced
     void (*builtin)(void);   // pointer to builtin function (if this is builtin)
     std::vector<Code> pcode; // bytecode for the function
 
     FunctionSymbol(const std::string &sym_name)
-        : Symbol(sym_name), referenced(false) {
+        : FuncClassSymbol(sym_name), referenced(false) {
         builtin = NULL;
     }
     ~FunctionSymbol() {}
 };
 
-struct ClassSymbol : public Symbol {
+struct ClassSymbol : public FuncClassSymbol {
     bool abstract;
 
     // Class that this class inherited from
@@ -81,7 +88,7 @@ struct ClassSymbol : public Symbol {
     std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> methods;
 
     ClassSymbol(const std::string &sym_name, bool is_abstract)
-        : Symbol(sym_name) {
+        : FuncClassSymbol(sym_name) {
         abstract = is_abstract;
     }
 

@@ -3,6 +3,7 @@
 namespace wxbasic {
 
 Symbol::~Symbol() {}
+FuncClassSymbol::~FuncClassSymbol() {}
 
 SymbolTable::SymbolTable() {
     // Craete the global scope

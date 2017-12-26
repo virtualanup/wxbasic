@@ -29,7 +29,6 @@ Parser::Parser(const std::string &file_name, SymbolTable &symbol_table)
                   std::istreambuf_iterator<char>());
 }
 
-
 // Parse the source code
 Code Parser::parse() {
 
@@ -264,9 +263,18 @@ void Parser::scan_routines() {
             }
 
             // Inherit virtual if prior declaration was virtual
-            if(current_class != 0)
-            {
+            if (current_class != 0) {
                 // Find method in the parents of class
+                auto prev_method =
+                    current_class->find_method(tokenizer.token_content());
+                if(prev_method != NULL)
+                {
+                    // If the previous definition was abstract or virtual, make this
+                    // method virtual too.
+                    if((prev_method->flags & (SYM_ISVIRTUAL | SYM_ISABSTRACT)) != 0)
+                        flags |= SYM_ISVIRTUAL;
+
+                }
             }
         }
     }

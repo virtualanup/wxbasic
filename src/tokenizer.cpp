@@ -316,6 +316,8 @@ void Tokenizer::set_token(TokenType token, const std::string &content) {
     }
 }
 
+std::string Tokenizer::token_content() { return cur_token->content; }
+
 bool Tokenizer::is_token(TokenType tok) const { return cur_token->type == tok; }
 
 TokenType Tokenizer::token_type() const { return cur_token->type; }
