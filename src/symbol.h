@@ -42,7 +42,7 @@ public:
     SymbolType type;  // type of the symbol
     std::string name; // name of the symbol
 
-    int scope; // scope of this symbol
+    int scope;    // scope of this symbol
     size_t index; // index at the symbol table
 
     std::shared_ptr<Symbol> parent;
@@ -62,37 +62,43 @@ struct LiteralSymbol : public Symbol {
 // Common parent of funciton symbol and class symbol
 struct FuncClassSymbol : public Symbol {
     int flags;
-    FuncClassSymbol(const std::string& sym_name):Symbol(sym_name){}
-    virtual ~FuncClassSymbol()=0;
+    FuncClassSymbol(const std::string &sym_name) : Symbol(sym_name) {
+        flags = 0;
+    }
+    virtual ~FuncClassSymbol() = 0;
+    bool is_abstract() { return (flags & SYM_ISABSTRACT) != 0; }
 };
 
 struct FunctionSymbol : public FuncClassSymbol {
 
-    bool referenced;         // If this function is referenced
-    void (*builtin)(void);   // pointer to builtin function (if this is builtin)
+    bool referenced;       // If this function is referenced
+    void (*builtin)(void); // pointer to builtin function (if this is builtin)
+    size_t args;           // number of arguments
+    size_t opt_args;       // optional args
+    bool va_args;          // is variable argument?
+
     std::vector<Code> pcode; // bytecode for the function
 
     FunctionSymbol(const std::string &sym_name)
         : FuncClassSymbol(sym_name), referenced(false) {
         builtin = NULL;
+        args = 0;
+        opt_args = 0;
+        va_args = false;
     }
     ~FunctionSymbol() {}
 };
 
 struct ClassSymbol : public FuncClassSymbol {
-    bool abstract;
-
     // Class that this class inherited from
     std::shared_ptr<ClassSymbol> superclass;
 
     std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> methods;
 
-    ClassSymbol(const std::string &sym_name, bool is_abstract)
+    ClassSymbol(const std::string &sym_name)
         : FuncClassSymbol(sym_name) {
-        abstract = is_abstract;
     }
 
-    bool is_abstract() { return abstract; }
 
     std::shared_ptr<FunctionSymbol> find_method(const std::string &);
 

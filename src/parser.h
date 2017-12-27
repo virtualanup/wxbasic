@@ -33,6 +33,7 @@ private:
 
     TokenType skip_line();
     void scan_routines();
+    void skip_expression();
     friend ParserError;
 
 public:

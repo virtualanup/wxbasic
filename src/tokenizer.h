@@ -44,6 +44,8 @@ public:
 
     bool is_token(TokenType) const;
 
+    void expect(TokenType, const std::string&);
+
     void load(const std::string &src, const std::string &srcname);
     int get_pos() const;
 };

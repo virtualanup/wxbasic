@@ -47,6 +47,11 @@ void SymbolTable::add_symbol(std::shared_ptr<Symbol> sym) {
     table.push_back(sym);
     // Store the index
     sym->index = table.size() - 1;
+
+    // Add it to the current scope
+    // TODO: can be other scopes?
+    sym->scope = current_scope;
+
     // Store the index in hash table
     index[current_scope][sym->name] = table.size() - 1;
 }

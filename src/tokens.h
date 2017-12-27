@@ -29,13 +29,21 @@ enum class TokenType {
 
     TOK_LPAREN,
     TOK_RPAREN,
+    TOK_LSQBKT,
+    TOK_RSQBKT,
+    TOK_LCURLY,
+    TOK_RCURLY,
 
     TOK_COMMA,
     TOK_SEMICOLON,
+    TOK_DOT,
+    TOK_3DOTS,
 
     // keywords
     TOK_ABSTRACT,
     TOK_AND,
+    TOK_AS,
+    TOK_CLASS,
     TOK_FUNCTION,
     TOK_INPUT,
     TOK_INV,
@@ -70,12 +78,19 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
 
     {TokenType::TOK_LPAREN, "TOK_LPAREN"},
     {TokenType::TOK_RPAREN, "TOK_RPAREN"},
+    {TokenType::TOK_LSQBKT, "TOK_LSQBKT"},
+    {TokenType::TOK_RSQBKT, "TOK_RSQBKT"},
+    {TokenType::TOK_LCURLY, "TOK_LCURLY"},
+    {TokenType::TOK_RCURLY, "TOK_RCURLY"},
+
 
     {TokenType::TOK_COMMA, "TOK_COMMA"},
     {TokenType::TOK_SEMICOLON, "TOK_SEMICOLON"},
 
     {TokenType::TOK_ABSTRACT, "TOK_ABSTRACT"},
     {TokenType::TOK_AND, "TOK_AND"},
+    {TokenType::TOK_AS, "TOK_AS"},
+    {TokenType::TOK_CLASS, "TOK_CLASS"},
     {TokenType::TOK_FUNCTION, "TOK_FUNCTION"},
     {TokenType::TOK_INPUT, "TOK_INPUT"},
     {TokenType::TOK_INV, "TOK_INV"},
@@ -93,6 +108,8 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
 const static std::unordered_map<std::string, TokenType> Keywords = {
     {"abstract", TokenType::TOK_ABSTRACT},
     {"and", TokenType::TOK_AND},
+    {"as", TokenType::TOK_AS},
+    {"class", TokenType::TOK_CLASS},
     {"function", TokenType::TOK_FUNCTION},
     {"input", TokenType::TOK_INPUT},
     {"inv", TokenType::TOK_INV},

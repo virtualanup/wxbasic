@@ -55,14 +55,47 @@ std::shared_ptr<wxbasic::Token> Tokenizer::next_token() {
             pos++;
             return cur_token;
 
+        case '[':
+            set_token(TokenType::TOK_LSQBKT, "[");
+            pos++;
+            return cur_token;
+
+        case ']':
+            set_token(TokenType::TOK_RSQBKT, "]");
+            pos++;
+            return cur_token;
+
+        case '{':
+            set_token(TokenType::TOK_LCURLY, "{");
+            pos++;
+            return cur_token;
+
+        case '}':
+            set_token(TokenType::TOK_RCURLY, "}");
+            pos++;
+            return cur_token;
+
+
         case ';':
             set_token(TokenType::TOK_SEMICOLON, ";");
             pos++;
             return cur_token;
+
         case ',':
             set_token(TokenType::TOK_COMMA, ",");
             pos++;
             return cur_token;
+
+        case '.':
+            pos++;
+            if (pos <= source.size() - 2 && source[pos] == '.' &&
+                source[pos + 1] == '.') {
+                set_token(TokenType::TOK_3DOTS, "...");
+                pos += 2;
+            } else
+                set_token(TokenType::TOK_DOT, ".");
+            return cur_token;
+
         case ')':
             set_token(TokenType::TOK_RPAREN, ")");
             pos++;
@@ -322,5 +355,12 @@ bool Tokenizer::is_token(TokenType tok) const { return cur_token->type == tok; }
 
 TokenType Tokenizer::token_type() const { return cur_token->type; }
 int Tokenizer::get_pos() const { return pos; }
+
+void Tokenizer::expect(TokenType type, const std::string &str) {
+    if (cur_token->type != type)
+        throw TokenizerError("Expected " + str, *this);
+    // skip ahead
+    next_token();
+}
 
 } // namespace wxbasic

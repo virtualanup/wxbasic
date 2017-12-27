@@ -213,6 +213,7 @@ TokenType Parser::skip_line() {
     // return its type
     return tokenizer.token_type();
 }
+
 // Scans for routines and classes in the source
 // This will help us to resolve forward references
 void Parser::scan_routines() {
@@ -267,16 +268,107 @@ void Parser::scan_routines() {
                 // Find method in the parents of class
                 auto prev_method =
                     current_class->find_method(tokenizer.token_content());
-                if(prev_method != NULL)
-                {
-                    // If the previous definition was abstract or virtual, make this
-                    // method virtual too.
-                    if((prev_method->flags & (SYM_ISVIRTUAL | SYM_ISABSTRACT)) != 0)
+                if (prev_method != NULL) {
+                    // If the previous definition was abstract or virtual, make
+                    // this method virtual too.
+                    if ((prev_method->flags &
+                         (SYM_ISVIRTUAL | SYM_ISABSTRACT)) != 0)
                         flags |= SYM_ISVIRTUAL;
-
                 }
             }
+            // Create a new symbol
+            auto new_function = std::shared_ptr<FunctionSymbol>(
+                new FunctionSymbol(tokenizer.token_content()));
+            new_function->flags = flags;
+
+            sym_table.add_symbol(new_function);
+
+            skip();
+            // Expect a opening bracket
+            tokenizer.expect(TokenType::TOK_LPAREN, "opening bracket (");
+            // If not closing right away
+            if (!tokenizer.is_token(TokenType::TOK_RPAREN)) {
+                while (true) {
+                    if (tokenizer.is_token(TokenType::TOK_3DOTS)) {
+                        // variable number of arguments
+                        new_function->va_args = true;
+                        break;
+                    } else {
+                        // move ahead
+                        skip();
+                    }
+                    if (tokenizer.is_token(TokenType::TOK_AS)) {
+                        skip();
+                        skip();
+                    }
+                    if (tokenizer.is_token(TokenType::TOK_EQ)) {
+                        // optional arguments (with default values)
+                        new_function->opt_args++;
+                        skip_expression();
+                    } else if (new_function->opt_args > 0) {
+                        // Non-optional arguments can't follow optional
+                        // arguments this will raise an exception
+                        expect(TokenType::TOK_EQ, "=");
+                    } else {
+                        new_function->args++;
+                    }
+                    // break if not a comma
+                    if (!tokenizer.is_token(TokenType::TOK_COMMA))
+                        break;
+                    skip();
+                }
+            }
+            tokenizer.expect(TokenType::TOK_RPAREN, "closing bracket )");
+        } //  tokenizer.is_token(TokenType::TOK_FUNCTION
+        else if (tokenizer.is_token(TokenType::TOK_CLASS) ||
+                 (current_class == NULL &&
+                  tokenizer.is_token(TokenType::TOK_ABSTRACT))) {
+            // parse the class definition
+            if(tokenizer.is_token(TokenType::TOK_ABSTRACT))
+            {
+                skip();
+                flags = SYM_ISABSTRACT;
+            }
+            else
+                flags = 0;
+            tokenizer.expect(TokenType::TOK_CLASS, "class");
+
+            // make sure that the name is not used
+            sym_table.unused(tokenizer.token_content());
+
+            auto new_class = std::shared_ptr<ClassSymbol>(
+                new ClassSymbol(tokenizer.token_content()));
+            new_class ->flags = flags;
+
+            sym_table.add_symbol(new_class);
         }
+    }
+}
+
+void Parser::skip_expression() {
+    // parenthesis count
+    int p_count = 0;
+    while (!tokenizer.is_token(TokenType::TOK_EOF)) {
+        if (p_count == 0 && (tokenizer.is_token(TokenType::TOK_RPAREN) ||
+                             tokenizer.is_token(TokenType::TOK_COMMA)))
+            break;
+
+        switch (tokenizer.token_type()) {
+        case TokenType::TOK_LPAREN:
+        case TokenType::TOK_LSQBKT:
+        case TokenType::TOK_LCURLY:
+            p_count++;
+            break;
+        case TokenType::TOK_RPAREN:
+        case TokenType::TOK_RSQBKT:
+        case TokenType::TOK_RCURLY:
+            p_count--;
+            break;
+        default:
+            break;
+        }
+        // go to next token
+        skip();
     }
 }
 } // namespace wxbasic
