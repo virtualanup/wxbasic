@@ -12,13 +12,18 @@ SymbolTable::SymbolTable() {
     add_symbol(std::shared_ptr<FunctionSymbol>(new FunctionSymbol("__global")));
 }
 
-int SymbolTable::enter_scope(int scope) {
+int SymbolTable::enter_scope(int scope, bool is_class) {
     // Create a new index for the scope
     if (scope == -1) {
         scope = index.size();
         index.push_back(SymbolTableObj());
     }
     current_scope = scope;
+    if (is_class)
+        class_scope = current_scope;
+    else
+        class_scope = 0;
+
     return current_scope;
 }
 

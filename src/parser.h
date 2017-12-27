@@ -26,7 +26,7 @@ private:
     void parse_seperator(bool must_exist = true);
     void parse_print();
 
-    void expect(TokenType, const std::string &);
+    void expect(TokenType, const std::string &, bool skip_token=true);
     bool is_seperator();
     void skip();
 
@@ -34,6 +34,7 @@ private:
     TokenType skip_line();
     void scan_routines();
     void skip_expression();
+    void check_abstract(const ClassSymbol*);
     friend ParserError;
 
 public:

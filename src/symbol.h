@@ -93,12 +93,9 @@ struct ClassSymbol : public FuncClassSymbol {
     // Class that this class inherited from
     std::shared_ptr<ClassSymbol> superclass;
 
-    std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> methods;
+    std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> members;
 
-    ClassSymbol(const std::string &sym_name)
-        : FuncClassSymbol(sym_name) {
-    }
-
+    ClassSymbol(const std::string &sym_name) : FuncClassSymbol(sym_name) {}
 
     std::shared_ptr<FunctionSymbol> find_method(const std::string &);
 
@@ -129,7 +126,8 @@ public:
 
     void add_symbol(std::shared_ptr<Symbol> sym);
 
-    int enter_scope(int scope = -1);
+    // enter an existing scope
+    int enter_scope(int scope = -1, bool is_class = false);
 };
 
 } // namespace wxbasic

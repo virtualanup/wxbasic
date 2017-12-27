@@ -169,12 +169,14 @@ void Parser::parse_operand() {
     }
 }
 
-void Parser::expect(TokenType expected, const std::string &exp_str) {
+void Parser::expect(TokenType expected, const std::string &exp_str,
+                    bool skip_token) {
     if (tokenizer.token_type() != expected)
         throw ParserError("Expected " + exp_str + " not " +
                               tokenizer.token()->content,
                           *this);
-    skip();
+    if (skip_token)
+        skip();
 }
 
 bool Parser::is_seperator() {
@@ -324,27 +326,79 @@ void Parser::scan_routines() {
                  (current_class == NULL &&
                   tokenizer.is_token(TokenType::TOK_ABSTRACT))) {
             // parse the class definition
-            if(tokenizer.is_token(TokenType::TOK_ABSTRACT))
-            {
+            if (tokenizer.is_token(TokenType::TOK_ABSTRACT)) {
                 skip();
                 flags = SYM_ISABSTRACT;
-            }
-            else
+            } else
                 flags = 0;
             tokenizer.expect(TokenType::TOK_CLASS, "class");
 
             // make sure that the name is not used
             sym_table.unused(tokenizer.token_content());
 
-            auto new_class = std::shared_ptr<ClassSymbol>(
+            current_class = std::shared_ptr<ClassSymbol>(
                 new ClassSymbol(tokenizer.token_content()));
-            new_class ->flags = flags;
 
-            sym_table.add_symbol(new_class);
+            current_class->flags = flags;
+
+            // add the class to the global scope
+            sym_table.add_symbol(current_class);
+
+            // Create a new scope for the class
+            current_class->scope = sym_table.enter_scope(-1, true);
+            skip();
+
+            if (tokenizer.is_token(TokenType::TOK_INHERITS)) {
+                skip();
+                // Expect a class name after inherits but don't skip the token
+                expect(TokenType::TOK_CLASS_NAME, "Class name", false);
+
+                // abstract class can only inherit from abstract class
+                if ((current_class->flags & SYM_ISABSTRACT != 0) &&
+                    (std::static_pointer_cast<ClassSymbol>(
+                         tokenizer.token()->symbol)
+                         ->flags &
+                     SYM_ISABSTRACT == 0)) {
+                    // TODO: Cange parse error to some other error class like
+                    // syntax error
+                    throw ParserError("Abstract class " + current_class->name +
+                                          " can't inherit from non-abstract "
+                                          "class " +
+                                          tokenizer.token()->symbol->name,
+                                      *this);
+                }
+
+                // set the superclass for this class
+                current_class->superclass =
+                    std::static_pointer_cast<ClassSymbol>(
+                        tokenizer.token()->symbol);
+
+                // copy the members from superclass to the new class
+                current_class->members = current_class->superclass->members;
+                skip();
+            }
+        } else if (tokenizer.is_token(TokenType::TOK_END)) {
+            // end of class?
+            skip();
+            if (tokenizer.is_token(TokenType::TOK_CLASS)) {
+                // check and make sure that it defines all the abstract methods
+                check_abstract(current_class);
+            }
         }
     }
 }
 
+void Parser::check_abstract(const ClassSymbol *cls) {
+
+    // if this class is abstract or doesn't inherit, or if it inherits but
+    // superclass is not abstract
+    if ((cls->flags & SYM_ISABSTRACT != 0) || (cls->superclass == NULL) ||
+        (cls->superclass->flags & SYM_ISABSTRACT == 0)) {
+        return;
+    }
+
+    return;
+}
 void Parser::skip_expression() {
     // parenthesis count
     int p_count = 0;

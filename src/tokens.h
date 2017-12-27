@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "symbol.h"
 namespace wxbasic {
 
 enum class TokenType {
@@ -14,6 +15,7 @@ enum class TokenType {
     TOK_STRING,
 
     TOK_IDENTIFIER,
+    TOK_CLASS_NAME,
 
     TOK_LT,
     TOK_LTE,
@@ -44,7 +46,9 @@ enum class TokenType {
     TOK_AND,
     TOK_AS,
     TOK_CLASS,
+    TOK_END,
     TOK_FUNCTION,
+    TOK_INHERITS,
     TOK_INPUT,
     TOK_INV,
     TOK_NOT,
@@ -83,7 +87,6 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
     {TokenType::TOK_LCURLY, "TOK_LCURLY"},
     {TokenType::TOK_RCURLY, "TOK_RCURLY"},
 
-
     {TokenType::TOK_COMMA, "TOK_COMMA"},
     {TokenType::TOK_SEMICOLON, "TOK_SEMICOLON"},
 
@@ -91,7 +94,9 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
     {TokenType::TOK_AND, "TOK_AND"},
     {TokenType::TOK_AS, "TOK_AS"},
     {TokenType::TOK_CLASS, "TOK_CLASS"},
+    {TokenType::TOK_END, "TOK_END"},
     {TokenType::TOK_FUNCTION, "TOK_FUNCTION"},
+    {TokenType::TOK_INHERITS, "TOK_INHERITS"},
     {TokenType::TOK_INPUT, "TOK_INPUT"},
     {TokenType::TOK_INV, "TOK_INV"},
     {TokenType::TOK_NOT, "TOK_NOT"},
@@ -110,7 +115,9 @@ const static std::unordered_map<std::string, TokenType> Keywords = {
     {"and", TokenType::TOK_AND},
     {"as", TokenType::TOK_AS},
     {"class", TokenType::TOK_CLASS},
+    {"end", TokenType::TOK_END},
     {"function", TokenType::TOK_FUNCTION},
+    {"inherits", TokenType::TOK_INHERITS},
     {"input", TokenType::TOK_INPUT},
     {"inv", TokenType::TOK_INV},
     {"not", TokenType::TOK_NOT},
@@ -129,6 +136,9 @@ public:
         long long int_val;
         long double float_val;
     } value;
+
+    // pointer to the symbol current token represents (if any)
+    std::shared_ptr<Symbol> symbol;
 
     std::shared_ptr<std::string> source_name;
     Token(TokenType t_type, const std::string &content,
