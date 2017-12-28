@@ -34,7 +34,7 @@ private:
     TokenType skip_line();
     void scan_routines();
     void skip_expression();
-    void check_abstract(const ClassSymbol*);
+    void check_abstract(std::shared_ptr<ClassSymbol>);
     friend ParserError;
 
 public:

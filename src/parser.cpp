@@ -219,10 +219,11 @@ TokenType Parser::skip_line() {
 // Scans for routines and classes in the source
 // This will help us to resolve forward references
 void Parser::scan_routines() {
-    ClassSymbol *current_class = NULL;
+    std::shared_ptr<ClassSymbol> current_class = NULL;
     int flags;
     // parse until EOF is reached
     while (skip_line() != TokenType::TOK_EOF) {
+
         if (tokenizer.is_token(TokenType::TOK_ABSTRACT) &&
             current_class != NULL) {
             flags = SYM_ISABSTRACT;
@@ -336,16 +337,16 @@ void Parser::scan_routines() {
             // make sure that the name is not used
             sym_table.unused(tokenizer.token_content());
 
-            current_class = std::shared_ptr<ClassSymbol>(
+            auto new_class = std::shared_ptr<ClassSymbol>(
                 new ClassSymbol(tokenizer.token_content()));
 
-            current_class->flags = flags;
+            new_class->flags = flags;
 
             // add the class to the global scope
-            sym_table.add_symbol(current_class);
+            sym_table.add_symbol(new_class);
 
             // Create a new scope for the class
-            current_class->scope = sym_table.enter_scope(-1, true);
+            new_class->class_scope = sym_table.enter_scope(-1, true);
             skip();
 
             if (tokenizer.is_token(TokenType::TOK_INHERITS)) {
@@ -354,14 +355,14 @@ void Parser::scan_routines() {
                 expect(TokenType::TOK_CLASS_NAME, "Class name", false);
 
                 // abstract class can only inherit from abstract class
-                if ((current_class->flags & SYM_ISABSTRACT != 0) &&
-                    (std::static_pointer_cast<ClassSymbol>(
-                         tokenizer.token()->symbol)
-                         ->flags &
-                     SYM_ISABSTRACT == 0)) {
+                if (((new_class->flags & SYM_ISABSTRACT) != 0) &&
+                    ((std::static_pointer_cast<ClassSymbol>(
+                          tokenizer.token()->symbol)
+                          ->flags &
+                      SYM_ISABSTRACT) == 0)) {
                     // TODO: Cange parse error to some other error class like
                     // syntax error
-                    throw ParserError("Abstract class " + current_class->name +
+                    throw ParserError("Abstract class " + new_class->name +
                                           " can't inherit from non-abstract "
                                           "class " +
                                           tokenizer.token()->symbol->name,
@@ -369,13 +370,13 @@ void Parser::scan_routines() {
                 }
 
                 // set the superclass for this class
-                current_class->superclass =
-                    std::static_pointer_cast<ClassSymbol>(
-                        tokenizer.token()->symbol);
+                new_class->superclass = std::static_pointer_cast<ClassSymbol>(
+                    tokenizer.token()->symbol);
 
                 // copy the members from superclass to the new class
-                current_class->members = current_class->superclass->members;
+                new_class->members = new_class->superclass->members;
                 skip();
+                current_class = new_class;
             }
         } else if (tokenizer.is_token(TokenType::TOK_END)) {
             // end of class?
@@ -388,12 +389,12 @@ void Parser::scan_routines() {
     }
 }
 
-void Parser::check_abstract(const ClassSymbol *cls) {
+void Parser::check_abstract(std::shared_ptr<ClassSymbol> cls) {
 
     // if this class is abstract or doesn't inherit, or if it inherits but
     // superclass is not abstract
-    if ((cls->flags & SYM_ISABSTRACT != 0) || (cls->superclass == NULL) ||
-        (cls->superclass->flags & SYM_ISABSTRACT == 0)) {
+    if (((cls->flags & SYM_ISABSTRACT) != 0) || (cls->superclass == NULL) ||
+        ((cls->superclass->flags & SYM_ISABSTRACT) == 0)) {
         return;
     }
 

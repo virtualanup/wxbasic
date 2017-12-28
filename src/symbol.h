@@ -90,10 +90,15 @@ struct FunctionSymbol : public FuncClassSymbol {
 };
 
 struct ClassSymbol : public FuncClassSymbol {
+    // The scope created by this class. Members will be created
+    // in this scope
+    int class_scope;
+
     // Class that this class inherited from
     std::shared_ptr<ClassSymbol> superclass;
 
-    std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> members;
+    std::unordered_map<std::string, std::shared_ptr<Symbol>> members;
+    std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> methods;
 
     ClassSymbol(const std::string &sym_name) : FuncClassSymbol(sym_name) {}
 
