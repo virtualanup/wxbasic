@@ -75,7 +75,6 @@ std::shared_ptr<wxbasic::Token> Tokenizer::next_token() {
             pos++;
             return cur_token;
 
-
         case ';':
             set_token(TokenType::TOK_SEMICOLON, ";");
             pos++;
@@ -108,7 +107,7 @@ std::shared_ptr<wxbasic::Token> Tokenizer::next_token() {
         case '%':
         case '^':
         case '\\':
-            set_token(TokenType::TOK_BINOP, std::string(1, source[pos]));
+            set_token(TokenType::TOK_OP, std::string(1, source[pos]));
             pos++;
             return cur_token;
         case '!':

@@ -27,7 +27,8 @@ enum class TokenType {
     TOK_SHL,
     TOK_SHR,
 
-    TOK_BINOP, // +, -, *, /, %, ^, '\'
+    // binary operators (can be unary)
+    TOK_OP, // +, -, *, /, %, ^, '\'
 
     TOK_LPAREN,
     TOK_RPAREN,
@@ -78,7 +79,7 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
     {TokenType::TOK_SHL, "TOK_SHL"},
     {TokenType::TOK_SHR, "TOK_SHR"},
 
-    {TokenType::TOK_BINOP, "TOK_BINOP"},
+    {TokenType::TOK_OP, "TOK_OP"},
 
     {TokenType::TOK_LPAREN, "TOK_LPAREN"},
     {TokenType::TOK_RPAREN, "TOK_RPAREN"},

@@ -12,7 +12,7 @@ void WxBasic::run() {
 
 void WxBasic::load_file(const std::string file_name) {
     Parser parser = Parser(file_name, sym_table);
-    parser.parse();
+    auto code = parser.parse();
 }
 
 } // namespace wxbasic

@@ -18,13 +18,11 @@ private:
     std::string source;
     SymbolTable &sym_table;
 
-    Code code;
-
-    void parse_expression(int);
-    void parse_operand();
-    void parse_statement();
+    std::shared_ptr<Code> parse_expression(int);
+    std::shared_ptr<Code> parse_operand();
+    std::shared_ptr<Code> parse_statement();
     void parse_seperator(bool must_exist = true);
-    void parse_print();
+    std::shared_ptr<Code> parse_print();
 
     void expect(TokenType, const std::string &, bool skip_token = true);
     bool is_seperator();
@@ -41,7 +39,7 @@ public:
     Parser(const std::string &filename, SymbolTable &symbol_table);
 
     void scan_routines();
-    Code parse();
+    std::shared_ptr<Code> parse();
     void print_tokens();
 };
 

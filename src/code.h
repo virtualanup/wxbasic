@@ -2,6 +2,7 @@
 #define WXBASIC_CODE_H
 
 #include <vector>
+#include <memory>
 
 #include "opcode.h"
 namespace wxbasic {
@@ -20,6 +21,7 @@ public:
     void clear();
     void emit(OpcodeType code);
     void emit_op(OpcodeType code);
+    void append(std::shared_ptr<Code>);
 };
 
 } // namespace wxbasic

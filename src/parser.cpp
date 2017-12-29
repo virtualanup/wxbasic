@@ -30,7 +30,9 @@ Parser::Parser(const std::string &file_name, SymbolTable &symbol_table)
 }
 
 // Parse the source code
-Code Parser::parse() {
+std::shared_ptr<Code> Parser::parse() {
+
+    auto code = std::shared_ptr<Code>(new Code());
 
     // Load the content
     tokenizer.load(source, source_name);
@@ -41,11 +43,9 @@ Code Parser::parse() {
     // Reload the program
     tokenizer.load(source, source_name);
 
-    // Vector of bytecode
-    code.clear();
-
     while (!tokenizer.is_token(TokenType::TOK_EOF)) {
-        parse_statement();
+        // Parse the statement and append the opcode
+        code->append(parse_statement());
         tokenizer.next_token();
     }
 
@@ -53,29 +53,33 @@ Code Parser::parse() {
 }
 
 // Parse a single statement
-void Parser::parse_statement() {
+std::shared_ptr<Code> Parser::parse_statement() {
 
     // empty line
     if (is_seperator()) {
         parse_seperator();
-        return;
+        return NULL;
     }
 
     switch (tokenizer.token()->type) {
     case TokenType::TOK_PRINT:
-        parse_print();
-        break;
+        return parse_print();
     default:
+        // Assume it is an assignment
         break;
     }
+    return NULL;
 }
 
-void Parser::parse_print() {
+std::shared_ptr<Code> Parser::parse_print() {
+    auto code = std::shared_ptr<Code>(new Code());
+    // skip the print token
     skip();
+
     if (is_seperator()) {
         // empty print statement.
-        code.emit_op(OpcodeType::OP_EMITLN);
-        return;
+        code->emit_op(OpcodeType::OP_EMITLN);
+        return code;
     }
     while (1) {
         // leading ;
@@ -88,9 +92,9 @@ void Parser::parse_print() {
         // leading ,
         else if (tokenizer.is_token(TokenType::TOK_COMMA)) {
             skip();
-            code.emit_op(OpcodeType::OP_EMITTAB);
+            code->emit_op(OpcodeType::OP_EMITTAB);
             if (is_seperator()) {
-                code.emit_op(OpcodeType::OP_EMITLN);
+                code->emit_op(OpcodeType::OP_EMITLN);
                 break;
             }
         } else if (is_seperator()) {
@@ -100,70 +104,84 @@ void Parser::parse_print() {
             // trailing values
             if (tokenizer.is_token(TokenType::TOK_SEMICOLON)) {
                 skip();
-                code.emit_op(OpcodeType::OP_PRINT);
+                code->emit_op(OpcodeType::OP_PRINT);
             } else if (tokenizer.is_token(TokenType::TOK_COMMA)) {
                 skip();
-                code.emit_op(OpcodeType::OP_EMITTAB);
+                code->emit_op(OpcodeType::OP_EMITTAB);
                 if (is_seperator()) {
-                    code.emit_op(OpcodeType::OP_EMITLN);
+                    code->emit_op(OpcodeType::OP_EMITLN);
                 }
             } else {
                 break;
             }
         }
     }
+    return code;
 }
 
-void Parser::parse_expression(int prior_strength) {}
+std::shared_ptr<Code> Parser::parse_expression(int prior_strength) {
+    std::shared_ptr<Code> lhs, rhs;
+    lhs = parse_operand();
+    return NULL;
+}
 
-void Parser::parse_operand() {
+std::shared_ptr<Code> Parser::parse_operand() {
+
+    auto code = std::shared_ptr<Code>(new Code());
+
     switch (tokenizer.token_type()) {
 
         // unary NOT
     case TokenType::TOK_NOT:
         skip();
         parse_seperator(false);
-        parse_operand();
-        code.emit_op(OpcodeType::OP_NOT);
+        code = parse_operand();
+        code->emit_op(OpcodeType::OP_NOT);
         break;
 
         // unary inverse
     case TokenType::TOK_INV:
         skip();
         parse_seperator(false);
-        parse_operand();
-        code.emit_op(OpcodeType::OP_INV);
+        code = parse_operand();
+        code->emit_op(OpcodeType::OP_INV);
         break;
 
     case TokenType::TOK_LPAREN:
         skip();
+        // Skip seperator if found, ignore if not found
         parse_seperator(false);
-        parse_expression(0);
+
+        // Get the code for expression
+        code = parse_expression(0);
+
+        // expect closing parenthesis
         expect(TokenType::TOK_RPAREN, ")");
         break;
 
-    case TokenType::TOK_BINOP:
+    case TokenType::TOK_OP:
         // might be unary + or -
         if (tokenizer.token()->content == "+") {
             skip();
             parse_seperator(false);
-            parse_expression(0);
+            code = parse_expression(0);
         } else if (tokenizer.token()->content == "-") {
             skip();
             parse_seperator(false);
+
             if (tokenizer.token_type() == TokenType::TOK_FLOAT) {
                 // Add - to the float value
                 tokenizer.token()->value.float_val =
                     -tokenizer.token()->value.float_val;
-                parse_expression(0);
+                code = parse_expression(0);
             } else if (tokenizer.token_type() == TokenType::TOK_INTEGER) {
                 // Add - to the integer value
                 tokenizer.token()->value.int_val =
                     -tokenizer.token()->value.int_val;
-                parse_expression(0);
+                code = parse_expression(0);
             } else {
-                parse_expression(0);
-                code.emit_op(OpcodeType::OP_NEGATE);
+                code = parse_expression(0);
+                code->emit_op(OpcodeType::OP_NEGATE);
             }
         } else {
             throw ParserError("Expected an expression", *this);
@@ -171,9 +189,12 @@ void Parser::parse_operand() {
 
         break;
 
+    case TokenType::TOK_INTEGER:
+        //code->emit_op(OpcodeType::OP_INTEGER);
     default:
         throw ParserError("Expected an expression", *this);
     }
+    return code;
 }
 
 void Parser::expect(TokenType expected, const std::string &exp_str,
