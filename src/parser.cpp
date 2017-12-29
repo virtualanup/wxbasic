@@ -35,6 +35,9 @@ Code Parser::parse() {
     // Load the content
     tokenizer.load(source, source_name);
 
+    // scan for class and functions
+    scan_routines();
+
     // Vector of bytecode
     code.clear();
 
@@ -198,6 +201,7 @@ void Parser::parse_seperator(bool must_exist) {
 }
 
 void Parser::print_tokens() {
+    std::cout << "Tokens : " << std::endl;
     tokenizer.load(source, source_name);
     while (tokenizer.next_token()->type != TokenType::TOK_EOF) {
         std::cout << tokenizer.token()->str() << std::endl;
@@ -207,7 +211,7 @@ void Parser::print_tokens() {
 TokenType Parser::skip_line() {
 
     // skip until EOF or EOL is encountered.
-    while (tokenizer.token_type() != TokenType::TOK_EOF &&
+    while (tokenizer.token_type() != TokenType::TOK_SEPERATOR &&
            tokenizer.token_type() != TokenType::TOK_EOF)
         tokenizer.next_token();
     // Get next token
@@ -219,13 +223,20 @@ TokenType Parser::skip_line() {
 // Scans for routines and classes in the source
 // This will help us to resolve forward references
 void Parser::scan_routines() {
-    std::shared_ptr<ClassSymbol> current_class = NULL;
-    int flags;
-    // parse until EOF is reached
-    while (skip_line() != TokenType::TOK_EOF) {
+    // Load the content
+    tokenizer.load(source, source_name);
 
-        if (tokenizer.is_token(TokenType::TOK_ABSTRACT) &&
-            current_class != NULL) {
+    // this points to the current class we're inside
+    std::shared_ptr<ClassSymbol> current_class = NULL;
+
+    // flags for the class or function
+    int flags;
+
+    // parse until EOF is reached
+    while (!tokenizer.is_token((TokenType::TOK_EOF))) {
+
+        if (tokenizer.is_token(TokenType::TOK_ABSTRACT)) {
+            // the class or function is abstract
             flags = SYM_ISABSTRACT;
             skip();
         } else if (tokenizer.is_token(TokenType::TOK_SHARED) &&
@@ -323,19 +334,18 @@ void Parser::scan_routines() {
             }
             tokenizer.expect(TokenType::TOK_RPAREN, "closing bracket )");
         } //  tokenizer.is_token(TokenType::TOK_FUNCTION
-        else if (tokenizer.is_token(TokenType::TOK_CLASS) ||
-                 (current_class == NULL &&
-                  tokenizer.is_token(TokenType::TOK_ABSTRACT))) {
-            // parse the class definition
-            if (tokenizer.is_token(TokenType::TOK_ABSTRACT)) {
-                skip();
-                flags = SYM_ISABSTRACT;
-            } else
-                flags = 0;
-            tokenizer.expect(TokenType::TOK_CLASS, "class");
-
+        else if (tokenizer.is_token(TokenType::TOK_CLASS)) {
+            skip();
             // make sure that the name is not used
-            sym_table.unused(tokenizer.token_content());
+            std::shared_ptr<Symbol> sym =
+                sym_table.unused(tokenizer.token_content());
+            if (sym != NULL) {
+                throw ParserError(tokenizer.token_content() +
+                                      " is already defined as " +
+                                      SymbolNames.at(sym->type) + " of " +
+                                      sym_table.scope_owner(sym->scope)->name,
+                                  *this);
+            }
 
             auto new_class = std::shared_ptr<ClassSymbol>(
                 new ClassSymbol(tokenizer.token_content()));
@@ -346,7 +356,11 @@ void Parser::scan_routines() {
             sym_table.add_symbol(new_class);
 
             // Create a new scope for the class
-            new_class->class_scope = sym_table.enter_scope(-1, true);
+            new_class->class_scope = sym_table.create_scope(new_class);
+
+            // enter the newly created scope
+            sym_table.enter_scope(new_class->class_scope);
+
             skip();
 
             if (tokenizer.is_token(TokenType::TOK_INHERITS)) {
@@ -376,16 +390,22 @@ void Parser::scan_routines() {
                 // copy the members from superclass to the new class
                 new_class->members = new_class->superclass->members;
                 skip();
-                current_class = new_class;
             }
+            current_class = new_class;
         } else if (tokenizer.is_token(TokenType::TOK_END)) {
             // end of class?
             skip();
-            if (tokenizer.is_token(TokenType::TOK_CLASS)) {
+            if (tokenizer.is_token(TokenType::TOK_CLASS) &&
+                current_class != NULL) {
                 // check and make sure that it defines all the abstract methods
                 check_abstract(current_class);
+
+                // enter the global scope again
+                sym_table.enter_scope(0);
             }
         }
+
+        skip_line();
     }
 }
 

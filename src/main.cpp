@@ -31,10 +31,13 @@ int main(int argc, char *argv[]) {
     try {
 
         if (argc == 3 && std::string(argv[1]) == "--tokens") {
-            std::cout << "Tokens : " << std::endl;
             wxbasic::SymbolTable table;
             wxbasic::Parser parser =
                 wxbasic::Parser(std::string(argv[2]), table);
+            // scan the routines
+            parser.scan_routines();
+            // print the routines
+            table.print();
             parser.print_tokens();
             return 0;
         } else if (argc == 2) {

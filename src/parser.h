@@ -26,13 +26,11 @@ private:
     void parse_seperator(bool must_exist = true);
     void parse_print();
 
-    void expect(TokenType, const std::string &, bool skip_token=true);
+    void expect(TokenType, const std::string &, bool skip_token = true);
     bool is_seperator();
     void skip();
 
-
     TokenType skip_line();
-    void scan_routines();
     void skip_expression();
     void check_abstract(std::shared_ptr<ClassSymbol>);
     friend ParserError;
@@ -41,6 +39,8 @@ public:
     Parser(const std::string &sourcecode, const std::string &file_name,
            SymbolTable &symbol_table);
     Parser(const std::string &filename, SymbolTable &symbol_table);
+
+    void scan_routines();
     Code parse();
     void print_tokens();
 };

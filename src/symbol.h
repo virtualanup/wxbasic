@@ -42,27 +42,31 @@ public:
     SymbolType type;  // type of the symbol
     std::string name; // name of the symbol
 
-    int scope;    // scope of this symbol
+    size_t scope;    // scope of this symbol
     size_t index; // index at the symbol table
 
     std::shared_ptr<Symbol> parent;
 
-    Symbol(const std::string &sym_name) { name = sym_name; }
-    Symbol(const Symbol &sym) { name = sym.name; }
+    Symbol(const std::string &sym_name, SymbolType stype) {
+        name = sym_name;
+        type = stype;
+    }
     std::string symbol_name() { return SymbolNames.at(type); }
 
     virtual ~Symbol() = 0; // pure virtual destructor.
 };
 
 struct LiteralSymbol : public Symbol {
-    LiteralSymbol(const std::string &sym_name) : Symbol(sym_name) {}
+    LiteralSymbol(const std::string &sym_name)
+        : Symbol(sym_name, SymbolType::SYM_LITERAL) {}
     ~LiteralSymbol() {}
 };
 
 // Common parent of funciton symbol and class symbol
 struct FuncClassSymbol : public Symbol {
     int flags;
-    FuncClassSymbol(const std::string &sym_name) : Symbol(sym_name) {
+    FuncClassSymbol(const std::string &sym_name, SymbolType stype)
+        : Symbol(sym_name, stype) {
         flags = 0;
     }
     virtual ~FuncClassSymbol() = 0;
@@ -80,7 +84,8 @@ struct FunctionSymbol : public FuncClassSymbol {
     std::vector<Code> pcode; // bytecode for the function
 
     FunctionSymbol(const std::string &sym_name)
-        : FuncClassSymbol(sym_name), referenced(false) {
+        : FuncClassSymbol(sym_name, SymbolType::SYM_FUNCTION),
+          referenced(false) {
         builtin = NULL;
         args = 0;
         opt_args = 0;
@@ -92,7 +97,7 @@ struct FunctionSymbol : public FuncClassSymbol {
 struct ClassSymbol : public FuncClassSymbol {
     // The scope created by this class. Members will be created
     // in this scope
-    int class_scope;
+    size_t class_scope;
 
     // Class that this class inherited from
     std::shared_ptr<ClassSymbol> superclass;
@@ -100,7 +105,8 @@ struct ClassSymbol : public FuncClassSymbol {
     std::unordered_map<std::string, std::shared_ptr<Symbol>> members;
     std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> methods;
 
-    ClassSymbol(const std::string &sym_name) : FuncClassSymbol(sym_name) {}
+    ClassSymbol(const std::string &sym_name)
+        : FuncClassSymbol(sym_name, SymbolType::SYM_USER_CLASS) {}
 
     std::shared_ptr<FunctionSymbol> find_method(const std::string &);
 
@@ -117,22 +123,31 @@ class SymbolTable {
     // the symbol scope to its index in the vector
     std::vector<SymbolTableObj> index;
 
+    // this is a list of owners of the scopes
+    std::vector<std::shared_ptr<Symbol>> scope_owners;
+
     // vector is used to store all the symbols (for fast indexing)
     std::vector<std::shared_ptr<Symbol>> table;
 
-    int current_scope;
-    int class_scope;
+    size_t current_scope;
+    size_t class_scope;
 
 public:
     SymbolTable();
     virtual ~SymbolTable();
     std::shared_ptr<Symbol> unused(const std::string &);
+
     std::shared_ptr<Symbol> find_symbol(const std::string &symbol_name);
 
     void add_symbol(std::shared_ptr<Symbol> sym);
 
-    // enter an existing scope
-    int enter_scope(int scope = -1, bool is_class = false);
+    // enter an existing scope for the given symbol
+    int create_scope(std::shared_ptr<Symbol> owner);
+
+    void enter_scope(size_t scope);
+    std::shared_ptr<Symbol> scope_owner(size_t scope);
+
+    void print();
 };
 
 } // namespace wxbasic

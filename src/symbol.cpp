@@ -1,4 +1,5 @@
 #include "symbol.h"
+#include <iostream>
 
 namespace wxbasic {
 
@@ -6,25 +7,42 @@ Symbol::~Symbol() {}
 FuncClassSymbol::~FuncClassSymbol() {}
 
 SymbolTable::SymbolTable() {
-    // Craete the global scope
-    enter_scope();
-    // Declare the global function
-    add_symbol(std::shared_ptr<FunctionSymbol>(new FunctionSymbol("__global")));
+    // Create the global scope
+    current_scope = 0;
+    class_scope = 0;
+
+    auto global_sym =
+        std::shared_ptr<FunctionSymbol>(new FunctionSymbol("__global"));
+
+    create_scope(global_sym);
+
+    // Add the global function symbol in its own scope
+    add_symbol(global_sym);
 }
 
-int SymbolTable::enter_scope(int scope, bool is_class) {
+int SymbolTable::create_scope(std::shared_ptr<Symbol> owner) {
     // Create a new index for the scope
-    if (scope == -1) {
-        scope = index.size();
-        index.push_back(SymbolTableObj());
+    int free_scope = index.size();
+    index.push_back(SymbolTableObj());
+    scope_owners.push_back(owner);
+    return free_scope;
+}
+
+std::shared_ptr<Symbol> SymbolTable::scope_owner(size_t scope)
+{
+    return scope_owners[scope];
+}
+
+void SymbolTable::enter_scope(size_t scope) {
+    if (scope >= index.size()) {
+        // Scope doesn't exist. throw error.
     }
     current_scope = scope;
-    if (is_class)
+    if (scope_owners[current_scope]->type == SymbolType::SYM_BUILTIN_CLASS ||
+        scope_owners[current_scope]->type == SymbolType::SYM_USER_CLASS) {
         class_scope = current_scope;
-    else
+    } else
         class_scope = 0;
-
-    return current_scope;
 }
 
 SymbolTable::~SymbolTable() {}
@@ -48,6 +66,9 @@ std::shared_ptr<Symbol> SymbolTable::unused(const std::string &name) {
 }
 
 void SymbolTable::add_symbol(std::shared_ptr<Symbol> sym) {
+    std::cout << "Symbol " << sym->name << " added as "
+              << SymbolNames.at(sym->type) << " in scope " << current_scope
+              << std::endl;
     // Append it to the symbol list
     table.push_back(sym);
     // Store the index
@@ -90,4 +111,5 @@ ClassSymbol::find_method(const std::string &name) {
     return superclass->find_method(name);
 }
 
+void SymbolTable::print() { std::cout << "Symbol Table: " << std::endl; }
 } // namespace wxbasic

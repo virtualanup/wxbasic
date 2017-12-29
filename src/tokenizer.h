@@ -16,7 +16,7 @@ class Tokenizer {
     std::shared_ptr<std::string> source_name;
 
     // current token
-    std::shared_ptr<wxbasic::Token> cur_token;
+    std::shared_ptr<Token> cur_token;
 
     size_t pos;
 

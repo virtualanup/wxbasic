@@ -204,6 +204,8 @@ void Tokenizer::load(const std::string &src,
     source_name = std::shared_ptr<std::string>(new std::string(srcname));
 
     pos = 0;
+    // scan the first token
+    next_token();
 }
 
 void Tokenizer::skip_white() {
