@@ -28,8 +28,7 @@ int SymbolTable::create_scope(std::shared_ptr<Symbol> owner) {
     return free_scope;
 }
 
-std::shared_ptr<Symbol> SymbolTable::scope_owner(size_t scope)
-{
+std::shared_ptr<Symbol> SymbolTable::scope_owner(size_t scope) {
     return scope_owners[scope];
 }
 
@@ -66,9 +65,6 @@ std::shared_ptr<Symbol> SymbolTable::unused(const std::string &name) {
 }
 
 void SymbolTable::add_symbol(std::shared_ptr<Symbol> sym) {
-    std::cout << "Symbol " << sym->name << " added as "
-              << SymbolNames.at(sym->type) << " in scope " << current_scope
-              << std::endl;
     // Append it to the symbol list
     table.push_back(sym);
     // Store the index
@@ -111,5 +107,21 @@ ClassSymbol::find_method(const std::string &name) {
     return superclass->find_method(name);
 }
 
-void SymbolTable::print() { std::cout << "Symbol Table: " << std::endl; }
+void SymbolTable::print() {
+    std::cout << "Symbol Table: " << std::endl;
+    for (size_t i = 0; i < index.size(); i++) {
+        auto owner = scope_owners[i];
+        std::cout << "Table for " << owner->name << " of "
+                  << SymbolNames.at(owner->type) << std::endl;
+        // print out all the children
+        auto objects = index[i];
+        for (auto item : index[i]) {
+            std::cout << "\t" << item.first << " is "
+                      << SymbolNames.at(table[item.second]->type) << std::endl;
+        }
+        std::cout<<std::endl;
+    }
+    std::cout << std::endl << std::endl;
+}
+
 } // namespace wxbasic

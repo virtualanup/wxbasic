@@ -33,7 +33,7 @@ static const std::unordered_map<SymbolType, std::string> SymbolNames{
     {SymbolType::SYM_CONSTANT, "a constant"},
     {SymbolType::SYM_BUILTIN, "a builtin routine"},
     {SymbolType::SYM_FUNCTION, "a function"},
-    {SymbolType::SYM_USER_CLASS, "a class"},
+    {SymbolType::SYM_USER_CLASS, "a user-defined class"},
     {SymbolType::SYM_BUILTIN_CLASS, "a builtin class"},
     {SymbolType::SYM_OBJECT, "an object"}};
 
@@ -42,7 +42,7 @@ public:
     SymbolType type;  // type of the symbol
     std::string name; // name of the symbol
 
-    size_t scope;    // scope of this symbol
+    size_t scope; // scope of this symbol
     size_t index; // index at the symbol table
 
     std::shared_ptr<Symbol> parent;

@@ -24,6 +24,7 @@ $(NAME): $(OBJS)
 
 test:
 	./build/wxbasic --tokens ./build/program
+	./build/wxbasic ./build/program
 
 clean:
 	rm -rf $(OBJDIR)

@@ -38,6 +38,9 @@ Code Parser::parse() {
     // scan for class and functions
     scan_routines();
 
+    // Reload the program
+    tokenizer.load(source, source_name);
+
     // Vector of bytecode
     code.clear();
 
@@ -45,6 +48,7 @@ Code Parser::parse() {
         parse_statement();
         tokenizer.next_token();
     }
+
     return code;
 }
 
