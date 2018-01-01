@@ -23,7 +23,7 @@ void Code::append(std::shared_ptr<Code> source) {
     if (source == NULL)
         return;
 
-    size_t dest_bp_size= pcode.size();
+    size_t dest_bp_size = pcode.size();
 
     // Fix the backpatch
     for (size_t i = 0; i < source->backpatch.size(); i++) {
@@ -31,7 +31,8 @@ void Code::append(std::shared_ptr<Code> source) {
     }
 
     // Append the backpatch and the opcodes
-    backpatch.insert(backpatch.end(), source->backpatch.begin(), source->backpatch.end());
+    backpatch.insert(backpatch.end(), source->backpatch.begin(),
+                     source->backpatch.end());
     pcode.insert(pcode.end(), source->pcode.begin(), source->pcode.end());
 
     last = source->last;
