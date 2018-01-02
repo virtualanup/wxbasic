@@ -5,8 +5,9 @@
 
 namespace wxbasic {
 
-    typedef long long wxInteger;
-    typedef long double wxFloat;
+    typedef long long Integer;
+    typedef long double Float;
+    typedef long double Number;
 
 } // namespace wxbasic
 
