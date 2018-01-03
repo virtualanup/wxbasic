@@ -1,16 +1,27 @@
 #ifndef WXBASIC_LITERAL_H
 #define WXBASIC_LITERAL_H
 
-#include "common.h"
 #include <string>
 #include <vector>
 
+#include "common.h"
+#include "variant.h"
+
 namespace wxbasic {
 
+// Literal table store literal values like value of a dictionary, value of
+// a string, etc.
+
+// TODO: Hash the literal value to avoid duplicates?
 class LiteralTable {
+    std::vector<std::shared_ptr<Variant>> table;
+
 public:
     LiteralTable();
     ~LiteralTable();
+
+    size_t add(std::shared_ptr<Variant> item);
+    std::shared_ptr<Variant> get(size_t index);
 };
 
 } // namespace wxbasic
