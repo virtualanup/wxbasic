@@ -127,7 +127,7 @@ std::shared_ptr<wxbasic::Token> Tokenizer::next_token() {
         case '<':
             pos++;
             if (pos < source.size() && source[pos] == '=') {
-                set_token(TokenType::TOK_LTE, "<=");
+                set_token(TokenType::TOK_LE, "<=");
                 pos++;
             } else if (pos < source.size() && source[pos] == '>') {
                 set_token(TokenType::TOK_NE, "<>");
@@ -144,7 +144,7 @@ std::shared_ptr<wxbasic::Token> Tokenizer::next_token() {
         case '>':
             pos++;
             if (pos < source.size() && source[pos] == '=') {
-                set_token(TokenType::TOK_GTE, ">=");
+                set_token(TokenType::TOK_GE, ">=");
                 pos++;
             } else if (pos < source.size() && source[pos] == '>') {
                 set_token(TokenType::TOK_SHR, ">>");

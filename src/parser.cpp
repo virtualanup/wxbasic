@@ -123,6 +123,32 @@ std::shared_ptr<Code> Parser::parse_print() {
 std::shared_ptr<Code> Parser::parse_expression(int prior_strength) {
     std::shared_ptr<Code> lhs, rhs;
     lhs = parse_operand();
+
+    while (1) {
+        auto op1 = tokenizer.token();
+
+        // if not an operator, or if operator with less precedence, return
+        if ((!op1->is_operator()) || (op1->op_strength() <= prior_strength))
+            return lhs;
+
+        // accept the operator
+        skip();
+        // parse optional seperator
+        parse_seperator(false);
+
+        rhs = parse_operand();
+
+        auto op2 = tokenizer.token();
+        if (op2->is_operator() && op2->op_strength() > op1->op_strength()) {
+            skip();
+            parse_seperator(false);
+
+            // get expression and join
+            join_operands(rhs, parse_expression(op2->op_strength()), op2);
+        }
+        // join the left hand side
+        join_operands(lhs, rhs, op1);
+    }
     return NULL;
 }
 
@@ -205,8 +231,6 @@ std::shared_ptr<Code> Parser::parse_operand() {
         code->emit_op(OpcodeType::OP_LITERAL);
         code->emit(lit_table.add_string(tokenizer.token()->content));
         break;
-
-
     default:
         throw ParserError("Expected an expression", *this);
     }
@@ -487,4 +511,76 @@ void Parser::skip_expression() {
         skip();
     }
 }
+
+void Parser::join_operands(std::shared_ptr<Code> lhs, std::shared_ptr<Code> rhs,
+                           std::shared_ptr<Token> op_token) {
+
+    if (op_token->type == TokenType::TOK_AND ||
+        op_token->type == TokenType::TOK_OR) {
+    }
+
+    lhs->append(rhs);
+
+    switch (op_token->type) {
+
+    case TokenType::TOK_XOR:
+        lhs->emit_op(OpcodeType::OP_XOR);
+        break;
+
+    case TokenType::TOK_LT:
+        lhs->emit_op(OpcodeType::OP_LT);
+        break;
+
+    case TokenType::TOK_LE:
+        lhs->emit_op(OpcodeType::OP_LE);
+        break;
+
+    case TokenType::TOK_GT:
+        lhs->emit_op(OpcodeType::OP_GT);
+        break;
+
+    case TokenType::TOK_GE:
+        lhs->emit_op(OpcodeType::OP_GE);
+        break;
+
+    case TokenType::TOK_NE:
+        lhs->emit_op(OpcodeType::OP_NE);
+        break;
+
+    case TokenType::TOK_EQ:
+        lhs->emit_op(OpcodeType::OP_EQ);
+        break;
+    case TokenType::TOK_OP:
+        switch (op_token->content[0]) {
+        case '+':
+            lhs->emit_op(OpcodeType::OP_ADD);
+            break;
+        case '-':
+            lhs->emit_op(OpcodeType::OP_SUB);
+            break;
+        case '*':
+            lhs->emit_op(OpcodeType::OP_MUL);
+            break;
+        case '/':
+            lhs->emit_op(OpcodeType::OP_DIV);
+            break;
+        case '%':
+            lhs->emit_op(OpcodeType::OP_MOD);
+            break;
+        case '^':
+            lhs->emit_op(OpcodeType::OP_POWER);
+            break;
+        case '\\':
+            lhs->emit_op(OpcodeType::OP_IDIV);
+            break;
+        default:
+            // should never reach here
+            break;
+        }
+        break;
+    default:
+        break;
+    }
+}
+
 } // namespace wxbasic

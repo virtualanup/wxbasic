@@ -27,6 +27,8 @@ private:
     void parse_seperator(bool must_exist = true);
     std::shared_ptr<Code> parse_print();
 
+    void join_operands(std::shared_ptr<Code> lhs, std::shared_ptr<Code> rhs,
+                       std::shared_ptr<Token> token);
     void expect(TokenType, const std::string &, bool skip_token = true);
     bool is_seperator();
     void skip();

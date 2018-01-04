@@ -19,9 +19,9 @@ enum class TokenType {
     TOK_CLASS_NAME,
 
     TOK_LT,
-    TOK_LTE,
+    TOK_LE,
     TOK_GT,
-    TOK_GTE,
+    TOK_GE,
     TOK_NE,
     TOK_EQ,
 
@@ -58,6 +58,7 @@ enum class TokenType {
     TOK_PRINT,
     TOK_SHARED,
     TOK_VIRTUAL,
+    TOK_XOR,
 
     TOK_SEPERATOR,
     TOK_EOF,
@@ -71,9 +72,9 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
     {TokenType::TOK_IDENTIFIER, "TOK_IDENTIFIER"},
 
     {TokenType::TOK_LT, "TOK_LT"},
-    {TokenType::TOK_LTE, "TOK_LTE"},
+    {TokenType::TOK_LE, "TOK_LE"},
     {TokenType::TOK_GT, "TOK_GT"},
-    {TokenType::TOK_GTE, "TOK_GTE"},
+    {TokenType::TOK_GE, "TOK_GE"},
     {TokenType::TOK_NE, "TOK_NE"},
     {TokenType::TOK_EQ, "TOK_EQ"},
 
@@ -106,6 +107,7 @@ const static std::unordered_map<TokenType, std::string> TokenNames = {
     {TokenType::TOK_PRINT, "TOK_PRINT"},
     {TokenType::TOK_SHARED, "TOK_SHARED"},
     {TokenType::TOK_VIRTUAL, "TOK_VIRTUAL"},
+    {TokenType::TOK_XOR, "TOK_XOR"},
 
     {TokenType::TOK_SEPERATOR, "TOK_SEPERATOR"},
 
@@ -127,6 +129,7 @@ const static std::unordered_map<std::string, TokenType> Keywords = {
     {"print", TokenType::TOK_PRINT},
     {"shared", TokenType::TOK_SHARED},
     {"virtual", TokenType::TOK_VIRTUAL},
+    {"xor", TokenType::TOK_XOR},
 };
 
 class Token {
@@ -143,8 +146,12 @@ public:
     std::shared_ptr<Symbol> symbol;
 
     std::shared_ptr<std::string> source_name;
+
     Token(TokenType t_type, const std::string &content,
           std::shared_ptr<std::string>);
+
+    bool is_operator() const;
+    int op_strength() const;
 
     std::string str() const;
 };
