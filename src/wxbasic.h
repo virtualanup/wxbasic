@@ -2,9 +2,10 @@
 #ifndef WXBASIC_H
 #define WXBASIC_H
 
+#include "literal.h"
 #include "parser.h"
+#include "symbol.h"
 #include "tokenizer.h"
-#include"symbol.h"
 
 #include <iostream>
 #include <memory>
@@ -14,6 +15,8 @@ namespace wxbasic {
 
 class WxBasic {
     SymbolTable sym_table;
+    LiteralTable lit_table;
+
 public:
     WxBasic();
     WxBasic(const std::string file_name);

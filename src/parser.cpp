@@ -5,14 +5,15 @@
 namespace wxbasic {
 
 Parser::Parser(const std::string &sourcecode, const std::string &file_name,
-               SymbolTable &symbol_table)
-    : sym_table(symbol_table) {
+               SymbolTable &symbol_table, LiteralTable &literal_table)
+    : sym_table(symbol_table), lit_table(literal_table) {
     source_name = file_name;
     source = sourcecode;
 }
 
-Parser::Parser(const std::string &file_name, SymbolTable &symbol_table)
-    : sym_table(symbol_table) {
+Parser::Parser(const std::string &file_name, SymbolTable &symbol_table,
+               LiteralTable &literal_table)
+    : sym_table(symbol_table), lit_table(literal_table) {
     source_name = file_name;
 
     // try to load the file
@@ -190,7 +191,22 @@ std::shared_ptr<Code> Parser::parse_operand() {
         break;
 
     case TokenType::TOK_INTEGER:
-        //code->emit_op(OpcodeType::OP_INTEGER);
+        code->emit_op(OpcodeType::OP_LITERAL);
+        // Add value to the literal table and add the index of the literal
+        code->emit(lit_table.add_integer(tokenizer.token()->value.int_val));
+        break;
+
+    case TokenType::TOK_FLOAT:
+        code->emit_op(OpcodeType::OP_LITERAL);
+        code->emit(lit_table.add_float(tokenizer.token()->value.float_val));
+        break;
+
+    case TokenType::TOK_STRING:
+        code->emit_op(OpcodeType::OP_LITERAL);
+        code->emit(lit_table.add_string(tokenizer.token()->content));
+        break;
+
+
     default:
         throw ParserError("Expected an expression", *this);
     }

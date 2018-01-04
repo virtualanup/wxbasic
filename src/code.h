@@ -27,8 +27,10 @@ public:
 
     Code();
     void clear();
-    void emit(OpcodeType code);
+
+    void emit(size_t code);
     void emit_op(OpcodeType code);
+
     void append(std::shared_ptr<Code>);
 };
 

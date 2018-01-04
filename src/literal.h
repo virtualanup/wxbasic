@@ -21,6 +21,11 @@ public:
     ~LiteralTable();
 
     size_t add(std::shared_ptr<Variant> item);
+
+    size_t add_integer(Integer val);
+    size_t add_float(Float val);
+    size_t add_string(const std::string &);
+
     std::shared_ptr<Variant> get(size_t index);
 };
 

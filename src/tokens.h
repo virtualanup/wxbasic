@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "common.h"
 #include "symbol.h"
 namespace wxbasic {
 
@@ -134,8 +135,8 @@ public:
     std::string content;
 
     union {
-        long long int_val;
-        long double float_val;
+        Integer int_val;
+        Float float_val;
     } value;
 
     // pointer to the symbol current token represents (if any)

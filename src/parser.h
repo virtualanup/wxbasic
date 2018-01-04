@@ -2,6 +2,7 @@
 #define WXBASIC_PARSER_H
 
 #include "code.h"
+#include "literal.h"
 #include "symbol.h"
 #include "tokenizer.h"
 #include <memory>
@@ -16,7 +17,9 @@ private:
 
     std::string source_name;
     std::string source;
+
     SymbolTable &sym_table;
+    LiteralTable &lit_table;
 
     std::shared_ptr<Code> parse_expression(int);
     std::shared_ptr<Code> parse_operand();
@@ -35,8 +38,9 @@ private:
 
 public:
     Parser(const std::string &sourcecode, const std::string &file_name,
-           SymbolTable &symbol_table);
-    Parser(const std::string &filename, SymbolTable &symbol_table);
+           SymbolTable &symbol_table, LiteralTable &literal_table);
+    Parser(const std::string &filename, SymbolTable &symbol_table,
+           LiteralTable &literal_table);
 
     void scan_routines();
     std::shared_ptr<Code> parse();

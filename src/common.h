@@ -5,9 +5,11 @@
 
 namespace wxbasic {
 
-    typedef long long Integer;
-    typedef long double Float;
-    typedef long double Number;
+typedef long long Integer;
+typedef long double Float;
+typedef long double Number;
+
+class Variant;
 
 } // namespace wxbasic
 

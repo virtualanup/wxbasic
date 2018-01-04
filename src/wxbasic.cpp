@@ -11,7 +11,7 @@ void WxBasic::run() {
 }
 
 void WxBasic::load_file(const std::string file_name) {
-    Parser parser = Parser(file_name, sym_table);
+    Parser parser = Parser(file_name, sym_table, lit_table);
     auto code = parser.parse();
 }
 

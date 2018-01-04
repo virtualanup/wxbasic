@@ -3,7 +3,7 @@
 namespace wxbasic {
 Code::Code() {}
 
-void Code::emit(OpcodeType code) { pcode.push_back(code); }
+void Code::emit(size_t code) { pcode.push_back(code); }
 
 void Code::clear() {
     pcode.clear();
