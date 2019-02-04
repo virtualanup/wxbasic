@@ -1,12 +1,11 @@
 .PHONY: test
 DEBUG = -g
-CFLAGS = -Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter -c $(DEBUG)
-LFLAGS = -Wall -lm
+CXXFLAGS = -Wall -Wextra -std=c++14 -stdlib=libc++ -Wpedantic -Werror -Wno-unused-parameter -c $(DEBUG)
+LFLAGS := -Wall -lm
 
 SRCDIR := src
 BUILDDIR := build
 OBJDIR := $(BUILDDIR)/obj
-
 NAME := build/wxbasic
 
 override SRCS := $(shell find src/*.cpp -type f)
@@ -17,7 +16,7 @@ all: $(NAME)
 
 $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 	@mkdir -p $(OBJDIR)
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $< -o $@
 
 $(NAME): $(OBJS)
 	$(CXX) -o $(NAME) $^ $(LFLAGS)

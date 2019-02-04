@@ -2,10 +2,11 @@
 #define WXBASIC_OPCODE_H
 
 #include <unordered_map>
+#include <string>
 
 namespace wxbasic {
 
-enum class OpcodeType {
+enum OpcodeType {
     OP_UNDEFINED = 0, // error, undefined op
     OP_NOOP,          // no op
     OP_TRACE,         // trace

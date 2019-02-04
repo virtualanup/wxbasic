@@ -22,6 +22,8 @@ class WInteger : public WNumber {
 public:
     WInteger(Integer n) : WNumber(VariantType::INTEGER), value(n) {}
     WInteger() : WInteger(0) {}
+
+    Integer getValue() { return value; }
 };
 
 // Class for storing floating point numbers
@@ -31,6 +33,8 @@ class WFloat : public WNumber {
 public:
     WFloat(Float n) : WNumber(VariantType::FLOAT) {}
     WFloat() : WFloat(0.0) {}
+
+    Float get_value() { return value; }
 };
 
 } // namespace wxbasic
